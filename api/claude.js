@@ -7,8 +7,7 @@ export default async function handler(req, res) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': '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',
-    },
+      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
     body: JSON.stringify(req.body),
   });
   const text = await r.text();
