@@ -6,7 +6,10 @@ module.exports = async function handler(req, res) {
   const voiceId = req.query.voice || 'pNInz6obpgDQGcFmaJgB';
   const r = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' + voiceId, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'xi-api-key': 'cd5bc08e2442fe03053afb12265d0e54509d385026a026aef8eea754af405ac7' },
+    headers: {
+      'Content-Type': 'application/json',
+      'xi-api-key': 'cd5bc08e2442fe03053afb12265d0e54509d385026a026aef8eea754af405ac7'
+    },
     body: JSON.stringify(req.body),
   });
   const buffer = await r.arrayBuffer();
