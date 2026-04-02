@@ -371,6 +371,6 @@ function renderThrow(app){const ov=document.createElement('div');ov.style.cssTex
 function renderError(app){app.style.background='#0B0906';addSnow(app,8,true);const w=document.createElement('div');w.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;gap:24px;z-index:1;';w.innerHTML=`<div style="font-size:48px;">❄️</div><div style="font-family:var(--serif);font-size:24px;font-weight:300;font-style:italic;color:var(--cream);text-align:center;">Something went sideways</div><div style="font-family:var(--sans);font-size:13px;color:var(--muted);text-align:center;line-height:1.65;max-width:300px;">${errorMsg}</div><button id="retry" style="padding:15px 32px;border-radius:18px;background:var(--gold);color:var(--black);font-size:15px;font-weight:600;box-shadow:0 6px 24px rgba(229,180,68,0.3);">Try Again</button>`;app.appendChild(w);document.getElementById('retry').onclick=()=>go('home')}
 render();
 </script>
-<script src="/music.js"><\/script><script src="/recorder.js"></script></body>
+<script src="/music.js"></script><script src="/recorder.js"></script></body>
 </html>
 
