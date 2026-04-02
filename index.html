@@ -101,6 +101,8 @@ async function generateSpeech(text,voiceId){
   return {url:url,wordTimings:wordTimings};
 }
 
+
+async function shapeStory(raw,genreHint){if(genreHint){raw=raw+' [Shape this as a '+genreHint+' story using that genre structure]';}const text=await callClaude(SYS,raw);const clean=text.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();try{return JSON.parse(clean)}catch(ex){const m=clean.match(/\{[\s\S]*\}/);if(m)return JSON.parse(m[0]);throw new Error('Could not shape story')}}
 async function shapeStoryFromPhotos(photos,context){
   var resized=[];
   for(var i=0;i<photos.length;i++){resized.push(await resizeImageForAPI(photos[i],800));}
