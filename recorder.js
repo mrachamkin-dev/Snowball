@@ -68,7 +68,7 @@ async function recordStoryVideo(story,onProgress,onDone,onError){
   }catch(err){onError(err.message||'Recording failed');}
 }
 
-function showRecordingModal(story){
+function showRecordingModal(story,onVideoReady){
   var ov=document.createElement('div');
   ov.style.cssText='position:absolute;inset:0;z-index:30;background:rgba(6,4,2,0.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:32px;';
   document.getElementById('app').appendChild(ov);
@@ -76,6 +76,7 @@ function showRecordingModal(story){
   recordStoryVideo(story,
     function(pct,msg){var f=document.getElementById('rec-fill'),s=document.getElementById('rec-sub');if(f)f.style.width=pct+'%';if(s)s.textContent=msg;},
     function(url,ext){
+      if(onVideoReady){onVideoReady(url,ext);ov.remove();return;}
       ov.innerHTML='';ov.style.gap='20px';
       var ball=document.createElement('div');ball.className='ball';
       ball.style.cssText='width:60px;height:60px;flex-shrink:0;animation:ballFloat 3s ease-in-out infinite;box-shadow:inset -8px -7px 18px rgba(0,0,0,0.28),inset 4px 4px 10px rgba(255,255,255,0.68),0 8px 26px rgba(0,0,0,0.52),0 0 26px rgba(194,228,238,0.42);';
