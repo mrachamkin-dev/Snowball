@@ -155,6 +155,39 @@ function showGenrePicker(){
   ov.onclick=function(e){if(e.target===ov)ov.remove();};
 }
 
+
+function attachThrowGesture(ballEl,story){
+  var startX,startY,startTime,isDragging=false;
+  function getPos(e){var t=e.touches?e.touches[0]:e;return{x:t.clientX,y:t.clientY};}
+  ballEl.addEventListener('touchstart',function(e){
+    e.preventDefault();var pos=getPos(e);
+    startX=pos.x;startY=pos.y;startTime=Date.now();isDragging=true;
+    ballEl.style.transition='none';
+  },{passive:false});
+  ballEl.addEventListener('touchmove',function(e){
+    if(!isDragging)return;e.preventDefault();
+    var pos=getPos(e);var dx=pos.x-startX;var dy=pos.y-startY;
+    ballEl.style.transform='translate('+(dx*0.7)+'px,'+(dy*0.7)+'px) rotate('+(dx*0.5)+'deg)';
+  },{passive:false});
+  ballEl.addEventListener('touchend',function(e){
+    if(!isDragging)return;isDragging=false;
+    var pos=e.changedTouches[0];
+    var dx=pos.clientX-startX;var dy=pos.clientY-startY;
+    var dt=Date.now()-startTime;
+    var speed=Math.sqrt(dx*dx+dy*dy)/dt;
+    if(dy>-30||speed<0.3){
+      ballEl.style.transition='transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+      ballEl.style.transform='translate(0,0) rotate(0deg)';return;
+    }
+    ballEl.style.transition='transform 0.6s ease,opacity 0.6s ease';
+    ballEl.style.transform='translate('+(dx*8)+'px,'+(dy*8)+'px) scale(0.1) rotate('+(dx*3)+'deg)';
+    ballEl.style.opacity='0';
+    setTimeout(function(){
+      if(navigator.share){navigator.share({title:'My Snowball Story',text:(story.caption||'')+' snowball-ten.vercel.app'}).catch(function(){});}
+    },400);
+  },{passive:false});
+}
+
 function render(){const app=document.getElementById('app');app.innerHTML='';({home:renderHome,type:renderType,speak:renderSpeak,photos:renderPhotos,history:renderHistory,building:renderBuilding,playback:renderPlayback,error:renderError}[screen]||renderHome)(app)}
 function renderHome(app){
   app.style.background='#0B0906';
