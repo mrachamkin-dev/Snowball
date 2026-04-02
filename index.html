@@ -86,7 +86,28 @@ Return ONLY valid JSON no markdown no backticks:
 {"hook":"Scroll-stopping hook under 12 words. Confession/Contradiction/Stakes/Intrigue format.","location":"Place and time under 8 words.","narration":"First-person 90-130 words opens with hook warm cinematic specific.","hookImagePrompt":"Image matching hook emotion. 35mm film dramatic photorealistic no text.","caption":"TikTok caption teases + 4 hashtags under 160 chars.","visualPlan":[{"type":"user_photo","photoIndex":0,"reason":"why this works"},{"type":"ai_generate","imagePrompt":"specific cinematic scene. 35mm film dramatic photorealistic no text.","reason":"story gap"},{"type":"ai_from_reference","photoIndex":1,"imagePrompt":"enhanced cinematic version inspired by photo mood. 35mm film photorealistic no text.","reason":"why AI is better"},{"type":"user_photo","photoIndex":2,"reason":"why this works"}]}
 
 visualPlan must have exactly 4 entries in story order.`;
-async function shapeStoryFromPhotos(photos,context){const content=photos.map(d=>{const parts=d.split(',');const mt=parts[0].match(/:(.*?);/)[1];return{type:'image',source:{type:'base64',media_type:mt,data:parts[1]}};});content.push({type:'text',text:PHOTO_SYS+' Context: '+context});const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:content}]})});if(!r.ok)throw new Error('Vision error '+r.status);const d=await r.json();const txt=d.content&&d.content[0]?d.content[0].text:'';const clean=txt.replace(/```json/g,'').replace(/```/g,'').trim();try{return JSON.parse(clean);}catch(ex){const m=clean.match(/\{[\s\S]*\}/);if(m)return JSON.parse(m[0]);throw new Error('Could not read photos.');}}
+
+function resizeImageForAPI(dataUrl,maxSize){
+  return new Promise(function(resolve){
+    var img=new Image();
+    img.onload=function(){
+      var w=img.width,h=img.height;
+      var scale=Math.min(1,maxSize/Math.max(w,h));
+      var canvas=document.createElement('canvas');
+      canvas.width=Math.round(w*scale);
+      canvas.height=Math.round(h*scale);
+      var ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      resolve(canvas.toDataURL('image/jpeg',0.7));
+    };
+    img.src=dataUrl;
+  });
+}
+
+async function shapeStoryFromPhotos(photos,context){
+  var resized=[];
+  for(var i=0;i<photos.length;i++){resized.push(await resizeImageForAPI(photos[i],800));}
+  const content=resized.map(d=>{const parts=d.split(',');const mt=parts[0].match(/:(.*?);/)[1];return{type:'image',source:{type:'base64',media_type:mt,data:parts[1]}};});content.push({type:'text',text:PHOTO_SYS+' Context: '+context});const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:content}]})});if(!r.ok)throw new Error('Vision error '+r.status);const d=await r.json();const txt=d.content&&d.content[0]?d.content[0].text:'';const clean=txt.replace(/```json/g,'').replace(/```/g,'').trim();try{return JSON.parse(clean);}catch(ex){const m=clean.match(/\{[\s\S]*\}/);if(m)return JSON.parse(m[0]);throw new Error('Could not read photos.');}}
 
 
 async function executeVisualPlan(plan,photos,setProgFn){
