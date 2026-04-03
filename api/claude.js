@@ -15,3 +15,8 @@ module.exports = async function handler(req, res) {
   const text = await r.text();
   res.status(r.status).send(text);
 };
+
+module.exports.config = {
+  maxDuration: 60,
+  api: { bodyParser: { sizeLimit: '10mb' } }
+};
