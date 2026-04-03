@@ -7,6 +7,6 @@
     "api/story.js": { "maxDuration": 30 }
   },
   "rewrites": [
-    { "source": "/s/:id", "destination": "/public/player.html" }
+    { "source": "/s/:id", "destination": "/player.html" }
   ]
 }
