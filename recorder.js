@@ -35,7 +35,7 @@ async function recordStoryVideo(story,onProgress,onDone,onError){
       ctx.fillStyle='rgba(0,0,0,0.45)';ctx.fillRect(0,0,W,H);
       var tg=ctx.createLinearGradient(0,0,0,300);tg.addColorStop(0,'rgba(0,0,0,0.7)');tg.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=tg;ctx.fillRect(0,0,W,300);
       var bg=ctx.createLinearGradient(0,H-500,0,H);bg.addColorStop(0,'rgba(0,0,0,0)');bg.addColorStop(1,'rgba(0,0,0,0.92)');ctx.fillStyle=bg;ctx.fillRect(0,H-500,W,500);
-      ctx.fillStyle='rgba(238,232,220,0.38)';ctx.font='42px '+SF;ctx.textAlign='left';ctx.fillText('snowball',60,100);
+      ctx.fillStyle='rgba(238,232,220,0.55)';ctx.font='38px '+SF;ctx.textAlign='left';ctx.fillText('snow●ball',60,100);ctx.font='500 22px '+SS;ctx.fillStyle='rgba(238,232,220,0.35)';ctx.fillText('snowball-ten.vercel.app',60,138);
       var ho=t<1.5?t/1.5:1;ctx.globalAlpha=ho;
       if(story.location){ctx.fillStyle='#E5B444';ctx.font='500 30px '+SS;ctx.textAlign='center';ctx.fillText((story.location||'').toUpperCase(),W/2,H/2-90);}
       ctx.fillStyle='#EEE8DC';ctx.font='300 72px '+SF;ctx.textAlign='center';
