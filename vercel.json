@@ -2,6 +2,11 @@
   "functions": {
     "api/claude.js": { "maxDuration": 60 },
     "api/image.js": { "maxDuration": 60 },
-    "api/voice.js": { "maxDuration": 60 }
-  }
+    "api/voice.js": { "maxDuration": 60 },
+    "api/share.js": { "maxDuration": 30 },
+    "api/story.js": { "maxDuration": 30 }
+  },
+  "rewrites": [
+    { "source": "/s/:id", "destination": "/public/player.html" }
+  ]
 }
