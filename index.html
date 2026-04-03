@@ -65,62 +65,18 @@ function addSnow(el,count,dim){for(let i=0;i<count;i++){const p=document.createE
 function makeBall(size,animStr,extraStyle){const d=document.createElement('div');d.className='ball';d.style.cssText=[`width:${size}px`,`height:${size}px`,`box-shadow:${ballShadow(size)}`,animStr?`animation:${animStr}`:'',extraStyle||''].filter(Boolean).join(';');return d}
 async function callClaude(system,user){const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system,messages:[{role:'user',content:user}]})});if(!r.ok)throw new Error('Story engine error '+r.status);const d=await r.json();return d.content?.[0]?.text??''}
 async function generateImage(prompt,highQuality){var model=highQuality?'fal-ai/flux/dev':'fal-ai/flux/schnell';var fp=prompt+', ultra photorealistic, professional photography, perfect composition, no artifacts, no distorted faces, no text, no watermarks, cinema quality';var steps=highQuality?28:4;const r=await fetch('/api/image?model='+encodeURIComponent(model),{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Key '+FAL_KEY},body:JSON.stringify({prompt:fp,image_size:'landscape_4_3',num_inference_steps:steps,num_images:1})});if(!r.ok)throw new Error('Image error '+r.status);const d=await r.json();const url=d.images?.[0]?.url;if(!url)throw new Error('No image returned');return url}
-async function generateSpeech(text,voiceId){
-  const r=await fetch('/api/voice?voice='+(voiceId||'pNInz6obpgDQGcFmaJgB'),{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({text,model_id:'eleven_monolingual_v1',voice_settings:{stability:0.5,similarity_boost:0.75}})
-  });
-  if(!r.ok)throw new Error('Voice error '+r.status);
-  const blob=await r.blob();
-  return {url:URL.createObjectURL(blob),wordTimings:[]};
-}
+async function generateSpeech(text,voiceId){ const r=await fetch('/api/voice?voice='+(voiceId||'pNInz6obpgDQGcFmaJgB'),{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({text,model_id:'eleven_monolingual_v1',voice_settings:{stability:0.5,similarity_boost:0.75}}) }); if(!r.ok)throw new Error('Voice error '+r.status); const blob=await r.blob(); return {url:URL.createObjectURL(blob),wordTimings:[]}; }
 
 const SYS="You are a viral story editor trained on McKee, Harmon Story Circle, and TikTok scroll psychology. Given a raw personal story, return ONLY a valid JSON object no markdown no backticks. HOOK: Must stop a thumb mid-scroll in 3 seconds. Use one of: Confession, Contradiction, Stakes, Intrigue. Be specific to this story. Under 12 words. Present tense. IMAGE PROMPTS: Describe ONE specific cinematic moment. 35mm film, shallow depth of field, dramatic natural lighting, photorealistic, no text. Return this JSON: {\"genre\":\"REQUIRED one of: funny dramatic romantic action tragic triumphant\",\"hook\":\"scroll-stopping hook under 12 words\",\"location\":\"specific place and time under 8 words\",\"narration\":\"First-person 90-130 words. Opens with hook. Builds with But/Therefore. Cinematic and specific.\",\"hookImagePrompt\":\"Cinematic image matching hook emotion. 35mm film dramatic photorealistic no text.\",\"scenes\":[{\"beat\":\"opening\",\"imagePrompt\":\"35mm film dramatic photorealistic no text.\"},{\"beat\":\"tension\",\"imagePrompt\":\"35mm film dramatic photorealistic no text.\"},{\"beat\":\"escalation\",\"imagePrompt\":\"35mm film dramatic photorealistic no text.\"},{\"beat\":\"conflict peak\",\"imagePrompt\":\"35mm film dramatic photorealistic no text.\"},{\"beat\":\"turning point\",\"imagePrompt\":\"35mm film dramatic photorealistic no text.\"},{\"beat\":\"resolution\",\"imagePrompt\":\"35mm film dramatic photorealistic no text.\"},{\"beat\":\"aftermath\",\"imagePrompt\":\"35mm film dramatic photorealistic no text.\"},{\"beat\":\"final image\",\"imagePrompt\":\"35mm film dramatic photorealistic no text.\"}],\"caption\":\"TikTok caption teases without spoiling + 4 hashtags under 160 chars.\",\"voiceId\":\"Choose best ElevenLabs voice ID. Options: pNInz6obpgDQGcFmaJgB Adam warm male, ErXwobaYiN019PkySvjV Antoni narrative male, TxGEqnHWrfWFTfGW9XjX Josh deep cinematic male, 21m00Tcm4TlvDq8ikWAM Rachel warm female, EXAVITQu4vr4xnSDxMaL Bella emotional female, MF3mGyEYCl7XYWbV9V6O Elli energetic female. Return only the ID.\"}";
 async function shapeStory(raw,genreHint){if(genreHint){raw=raw+' [Shape this as a '+genreHint+' story using that genre structure]';}const text=await callClaude(SYS,raw);const clean=text.replace(/\x60\x60\x60json\s*/g,'').replace(/\x60\x60\x60\s*/g,'').trim();try{return JSON.parse(clean)}catch(ex){const m=clean.match(/\{[\s\S]*\}/);if(m)return JSON.parse(m[0]);throw new Error('Could not shape story')}}
 const PHOTO_SYS="You are a viral story editor and visual director. The user has shared real photos from their life. Analyze each photo for story relevance, visual quality, and emotional impact. Build the most compelling 4-image visual story using: KEEP high quality photos (type: user_photo), ENHANCE low quality photos as mood reference (type: ai_from_reference), FILL gaps with AI scenes (type: ai_generate). Return ONLY valid JSON no markdown: {\"hook\":\"scroll-stopping hook under 12 words\",\"location\":\"place and time under 8 words\",\"narration\":\"First-person 90-130 words opens with hook warm cinematic specific.\",\"hookImagePrompt\":\"35mm film dramatic photorealistic no text.\",\"caption\":\"TikTok caption teases + 4 hashtags under 160 chars.\",\"visualPlan\":[{\"type\":\"user_photo\",\"photoIndex\":0,\"reason\":\"why\"},{\"type\":\"ai_generate\",\"imagePrompt\":\"35mm film dramatic photorealistic no text.\",\"reason\":\"gap\"},{\"type\":\"ai_from_reference\",\"photoIndex\":1,\"imagePrompt\":\"35mm film photorealistic no text.\",\"reason\":\"why\"},{\"type\":\"user_photo\",\"photoIndex\":2,\"reason\":\"why\"}]}";
 
-function resizeImageForAPI(dataUrl,maxSize){
-  return new Promise(function(resolve){
-    var img=new Image();
-    img.onload=function(){
-      var w=img.width,ht=img.height;
-      var scale=Math.min(1,maxSize/Math.max(w,ht));
-      var canvas=document.createElement('canvas');
-      canvas.width=Math.round(w*scale);
-      canvas.height=Math.round(ht*scale);
-      var ctx=canvas.getContext('2d');
-      ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      resolve(canvas.toDataURL('image/jpeg',0.7));
-    };
-    img.src=dataUrl;
-  });
-}
+function resizeImageForAPI(dataUrl,maxSize){ return new Promise(function(resolve){ var img=new Image(); img.onload=function(){ var w=img.width,ht=img.height; var scale=Math.min(1,maxSize/Math.max(w,ht)); var canvas=document.createElement('canvas'); canvas.width=Math.round(w*scale); canvas.height=Math.round(ht*scale); var ctx=canvas.getContext('2d'); ctx.drawImage(img,0,0,canvas.width,canvas.height); resolve(canvas.toDataURL('image/jpeg',0.7)); }; img.src=dataUrl; }); }
 
-async function shapeStoryFromPhotos(photos,context){
-  var resized=[];
-  for(var i=0;i<photos.length;i++){resized.push(await resizeImageForAPI(photos[i],800));}
-  const content=resized.map(d=>{const parts=d.split(',');const mt=parts[0].match(/:(.*?);/)[1];return{type:'image',source:{type:'base64',media_type:mt,data:parts[1]}};});content.push({type:'text',text:PHOTO_SYS+' Context: '+context});const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:content}]})});if(!r.ok)throw new Error('Vision error '+r.status);const d=await r.json();const txt=d.content&&d.content[0]?d.content[0].text:'';const clean=txt.replace(/```json/g,'').replace(/```/g,'').trim();try{return JSON.parse(clean);}catch(ex){const m=clean.match(/\{[\s\S]*\}/);if(m)return JSON.parse(m[0]);throw new Error('Could not read photos.');}}
+async function shapeStoryFromPhotos(photos,context){ var resized=[]; for(var i=0;i<photos.length;i++){resized.push(await resizeImageForAPI(photos[i],800));} const content=resized.map(d=>{const parts=d.split(',');const mt=parts[0].match(/:(.*?);/)[1];return{type:'image',source:{type:'base64',media_type:mt,data:parts[1]}};});content.push({type:'text',text:PHOTO_SYS+' Context: '+context});const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:content}]})});if(!r.ok)throw new Error('Vision error '+r.status);const d=await r.json();const txt=d.content&&d.content[0]?d.content[0].text:'';const clean=txt.replace(/```json/g,'').replace(/```/g,'').trim();try{return JSON.parse(clean);}catch(ex){const m=clean.match(/\{[\s\S]*\}/);if(m)return JSON.parse(m[0]);throw new Error('Could not read photos.');}}
 
 
-async function executeVisualPlan(plan,photos,setProgFn){
-  const images=[];
-  const vp=plan.visualPlan||[];
-  const total=vp.length||4;
-  for(let i=0;i<vp.length;i++){
-    const step=vp[i];
-    if(step.type==='user_photo'&&photos[step.photoIndex]){
-      images.push(photos[step.photoIndex]);
-    } else if(step.type==='ai_generate'||step.type==='ai_from_reference'){
-      const url=await generateImage(step.imagePrompt);
-      images.push(url);
-    }
-    if(setProgFn)setProgFn(20+((i+1)/total)*55);
-  }
-  if(images.length===0)photos.forEach(p=>images.push(p));
-  const seen=new Set();const deduped=images.filter(img=>{if(seen.has(img))return false;seen.add(img);return true;});
-  return deduped.length>0?deduped:images;
-}
+async function executeVisualPlan(plan,photos,setProgFn){ const images=[]; const vp=plan.visualPlan||[]; const total=vp.length||4; for(let i=0;i<vp.length;i++){ const step=vp[i]; if(step.type==='user_photo'&&photos[step.photoIndex]){ images.push(photos[step.photoIndex]); } else if(step.type==='ai_generate'||step.type==='ai_from_reference'){ const url=await generateImage(step.imagePrompt); images.push(url); } if(setProgFn)setProgFn(20+((i+1)/total)*55); } if(images.length===0)photos.forEach(p=>images.push(p)); const seen=new Set();const deduped=images.filter(img=>{if(seen.has(img))return false;seen.add(img);return true;}); return deduped.length>0?deduped:images; }
 function renderPhotos(app){userPhotos=[];app.style.background='#070503';const wrap=document.createElement('div');wrap.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;';app.appendChild(wrap);const hdr=document.createElement('div');hdr.style.cssText='padding:52px 24px 0;display:flex;align-items:center;justify-content:space-between;';const backBtn=document.createElement('button');backBtn.style.cssText='color:var(--muted);font-family:var(--sans);font-size:13px;padding:4px 0;background:none;border:none;cursor:pointer;';backBtn.textContent='← Back';backBtn.onclick=()=>go('home');const logoDiv=document.createElement('div');logoDiv.className='logo';logoDiv.style.fontSize='19px';logoDiv.innerHTML='snow<span class="dot">●</span>ball';const spacer=document.createElement('div');spacer.style.width='50px';hdr.appendChild(backBtn);hdr.appendChild(logoDiv);hdr.appendChild(spacer);wrap.appendChild(hdr);const info=document.createElement('div');info.style.cssText='padding:14px 26px 0;';info.innerHTML='<div style="font-family:var(--serif);font-size:24px;font-style:italic;font-weight:300;color:var(--cream)">Your photos, your story</div><div style="font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5">Add up to 4 photos. AI reads them and writes your narration.</div>';wrap.appendChild(info);const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px;flex:1;';wrap.appendChild(grid);const photoData={};function makeSlot(i){const slot=document.createElement('div');slot.style.cssText='background:rgba(255,255,255,0.03);border:1.5px dashed var(--dim2);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;position:relative;overflow:hidden;min-height:110px;';const icon=document.createElement('div');icon.textContent='📷';icon.style.fontSize='24px';const lbl=document.createElement('div');lbl.textContent='Add photo';lbl.style.cssText='font-family:var(--sans);font-size:11px;color:var(--muted);';const inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.style.display='none';slot.appendChild(icon);slot.appendChild(lbl);slot.appendChild(inp);slot.onclick=()=>inp.click();inp.onchange=()=>{const file=inp.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{photoData[i]=ev.target.result;slot.innerHTML='';const img=document.createElement('img');img.src=ev.target.result;img.style.cssText='width:100%;height:100%;object-fit:cover;position:absolute;inset:0;';const rm=document.createElement('div');rm.textContent='✕';rm.style.cssText='position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;font-size:12px;color:white;cursor:pointer;';rm.onclick=ev2=>{ev2.stopPropagation();delete photoData[i];grid.replaceChild(makeSlot(i),slot);updateBtn();};slot.appendChild(img);slot.appendChild(rm);slot.style.border='none';updateBtn();};reader.readAsDataURL(file);};return slot;}for(let i=0;i<4;i++)grid.appendChild(makeSlot(i));const ctx=document.createElement('textarea');ctx.placeholder='Optional: describe what happened...';ctx.style.cssText='height:66px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid var(--dim2);color:var(--cream);font-family:var(--serif);font-size:15px;font-style:italic;padding:12px 16px;caret-color:var(--gold);resize:none;outline:none;margin:0 20px;width:calc(100% - 40px);';wrap.appendChild(ctx);const foot=document.createElement('div');foot.style.cssText='padding:10px 20px 44px;';const btn=document.createElement('button');btn.className='btn-dim';btn.style.cssText='font-size:16px;font-weight:600;padding:18px;border-radius:18px;width:100%;';btn.textContent='Add at least 1 photo';foot.appendChild(btn);wrap.appendChild(foot);function updateBtn(){const c=Object.keys(photoData).length;if(c>0){btn.className='btn-gold';btn.textContent='Shape my story ❄ ('+c+' photo'+(c>1?'s':'')+')';}else{btn.className='btn-dim';btn.textContent='Add at least 1 photo';}}btn.onclick=()=>{const photos=Object.values(photoData);if(!photos.length)return;userPhotos=photos;rawStory=ctx.value||'Tell the story in these photos.';go('building');};}
 
 
@@ -130,187 +86,12 @@ function getStreak(){var hist=getHistory();if(!hist.length)return 0;var days=new
 function renderHistory(app){app.style.background='#0B0906';var hist=getHistory();var wrap=document.createElement('div');wrap.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;';app.appendChild(wrap);var hdr=document.createElement('div');hdr.style.cssText='padding:52px 24px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;';hdr.innerHTML='<button id="hback" style="color:var(--muted);font-family:var(--sans);font-size:13px;background:none;border:none;cursor:pointer;">← Back</button><div style="font-family:var(--serif);font-size:19px;font-weight:600;color:var(--cream);">snow<span style="color:var(--gold);">●</span>ball</div><div style="width:50px;"></div>';wrap.appendChild(hdr);document.getElementById('hback').onclick=function(){go('home');};var streak=getStreak();var shared=hist.filter(function(h){return h.shared;}).length;var stats=document.createElement('div');stats.style.cssText='padding:0 24px 16px;display:flex;gap:12px;flex-shrink:0;';[['❄️',streak+' day streak'],['📖',hist.length+' stories'],['📤',shared+' shared']].forEach(function(item){var d=document.createElement('div');d.style.cssText='flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--dim2);border-radius:14px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;';d.innerHTML='<span style="font-size:20px;">'+item[0]+'</span><span style="font-family:var(--sans);font-size:11px;color:var(--muted);text-align:center;">'+item[1]+'</span>';stats.appendChild(d);});wrap.appendChild(stats);var list=document.createElement('div');list.style.cssText='flex:1;overflow-y:auto;padding:0 20px 40px;display:flex;flex-direction:column;gap:10px;';wrap.appendChild(list);if(!hist.length){list.innerHTML='<div style="font-family:var(--serif);font-size:18px;font-style:italic;color:var(--muted);text-align:center;margin-top:60px;">No stories yet. Tell your first one.</div>';}else{hist.forEach(function(entry){var card=document.createElement('div');card.style.cssText='background:rgba(255,255,255,0.03);border:1px solid var(--dim2);border-radius:16px;overflow:hidden;display:flex;cursor:pointer;min-height:80px;';var thumb=document.createElement('div');thumb.style.cssText='width:80px;flex-shrink:0;background:#1a1410;position:relative;overflow:hidden;';if(entry.images&&entry.images[0]){var ti=document.createElement('img');ti.src=entry.images[0];ti.style.cssText='width:100%;height:100%;object-fit:cover;';thumb.appendChild(ti);}var info=document.createElement('div');info.style.cssText='flex:1;padding:14px;display:flex;flex-direction:column;justify-content:center;gap:4px;overflow:hidden;';var hookEl=document.createElement('div');hookEl.style.cssText='font-family:var(--serif);font-size:15px;font-style:italic;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';hookEl.textContent=entry.hook||'Untitled';var metaEl=document.createElement('div');metaEl.style.cssText='font-family:var(--sans);font-size:10px;color:var(--muted);';var dd=new Date(entry.date);metaEl.textContent=dd.toLocaleDateString('en-US',{month:'short',day:'numeric'})+(entry.shared?' · Shared':'');info.appendChild(hookEl);info.appendChild(metaEl);card.appendChild(thumb);card.appendChild(info);card.onclick=function(){story=entry;go('playback');};list.appendChild(card);});}}
 
 
-function showGenrePicker(){
-  var ov=document.createElement('div');
-  ov.style.cssText='position:absolute;inset:0;z-index:25;background:rgba(6,4,2,0.92);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;';
-  document.getElementById('app').appendChild(ov);
-  var sheet=document.createElement('div');
-  sheet.style.cssText='width:100%;background:#0B0906;border-radius:24px 24px 0 0;padding:24px 20px 44px;display:flex;flex-direction:column;gap:12px;animation:slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) both;';
-  var title=document.createElement('div');
-  title.style.cssText='font-family:var(--serif);font-size:22px;font-weight:300;font-style:italic;color:var(--cream);';
-  title.textContent='Tell it a different way';
-  var sub=document.createElement('div');
-  sub.style.cssText='font-family:var(--sans);font-size:12px;color:var(--muted);';
-  sub.textContent='Same story. Different feel. Rebuilt in seconds.';
-  sheet.appendChild(title);sheet.appendChild(sub);
-  var grid=document.createElement('div');
-  grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:10px;';
-  var genres=[
-    {id:'funny',em:'Funny',desc:'Bigger laughs'},
-    {id:'dramatic',em:'Dramatic',desc:'Weight and stakes'},
-    {id:'romantic',em:'Romantic',desc:'Warmth and longing'},
-    {id:'action',em:'Action',desc:'Urgency and motion'},
-    {id:'tragic',em:'Tragic',desc:'Beauty in the loss'},
-    {id:'triumphant',em:'Triumphant',desc:'The comeback arc'}
-  ];
-  genres.forEach(function(g){
-    var btn=document.createElement('button');
-    var isCur=g.id===(currentGenre||'');
-    btn.style.cssText='padding:16px 12px;border-radius:16px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:4px;border:1px solid '+(isCur?'var(--gold)':'var(--dim2)')+';background:'+(isCur?'rgba(229,180,68,0.12)':'rgba(255,255,255,0.03)')+';';
-    var nm=document.createElement('span');nm.textContent=g.em;nm.style.cssText='font-family:var(--sans);font-size:14px;font-weight:600;color:'+(isCur?'var(--gold)':'var(--cream)')+';';
-    var ds=document.createElement('span');ds.textContent=g.desc;ds.style.cssText='font-family:var(--sans);font-size:10px;color:var(--muted);';
-    btn.appendChild(nm);btn.appendChild(ds);
-    btn.onclick=function(){ov.remove();if(g.id===currentGenre)return;forcedGenre=g.id;story=null;go('building');};
-    grid.appendChild(btn);
-  });
-  sheet.appendChild(grid);
-  var cancel=document.createElement('button');
-  cancel.style.cssText='font-family:var(--sans);font-size:13px;color:var(--muted);background:none;border:none;cursor:pointer;';
-  cancel.textContent='Keep this version';
-  cancel.onclick=function(){ov.remove();};
-  sheet.appendChild(cancel);
-  ov.appendChild(sheet);
-  ov.onclick=function(e){if(e.target===ov)ov.remove();};
-}
+function showGenrePicker(){ var ov=document.createElement('div'); ov.style.cssText='position:absolute;inset:0;z-index:25;background:rgba(6,4,2,0.92);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;'; document.getElementById('app').appendChild(ov); var sheet=document.createElement('div'); sheet.style.cssText='width:100%;background:#0B0906;border-radius:24px 24px 0 0;padding:24px 20px 44px;display:flex;flex-direction:column;gap:12px;animation:slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) both;'; var title=document.createElement('div'); title.style.cssText='font-family:var(--serif);font-size:22px;font-weight:300;font-style:italic;color:var(--cream);'; title.textContent='Tell it a different way'; var sub=document.createElement('div'); sub.style.cssText='font-family:var(--sans);font-size:12px;color:var(--muted);'; sub.textContent='Same story. Different feel. Rebuilt in seconds.'; sheet.appendChild(title);sheet.appendChild(sub); var grid=document.createElement('div'); grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:10px;'; var genres=[ {id:'funny',em:'Funny',desc:'Bigger laughs'}, {id:'dramatic',em:'Dramatic',desc:'Weight and stakes'}, {id:'romantic',em:'Romantic',desc:'Warmth and longing'}, {id:'action',em:'Action',desc:'Urgency and motion'}, {id:'tragic',em:'Tragic',desc:'Beauty in the loss'}, {id:'triumphant',em:'Triumphant',desc:'The comeback arc'} ]; genres.forEach(function(g){ var btn=document.createElement('button'); var isCur=g.id===(currentGenre||''); btn.style.cssText='padding:16px 12px;border-radius:16px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:4px;border:1px solid '+(isCur?'var(--gold)':'var(--dim2)')+';background:'+(isCur?'rgba(229,180,68,0.12)':'rgba(255,255,255,0.03)')+';'; var nm=document.createElement('span');nm.textContent=g.em;nm.style.cssText='font-family:var(--sans);font-size:14px;font-weight:600;color:'+(isCur?'var(--gold)':'var(--cream)')+';'; var ds=document.createElement('span');ds.textContent=g.desc;ds.style.cssText='font-family:var(--sans);font-size:10px;color:var(--muted);'; btn.appendChild(nm);btn.appendChild(ds); btn.onclick=function(){ov.remove();if(g.id===currentGenre)return;forcedGenre=g.id;story=null;go('building');}; grid.appendChild(btn); }); sheet.appendChild(grid); var cancel=document.createElement('button'); cancel.style.cssText='font-family:var(--sans);font-size:13px;color:var(--muted);background:none;border:none;cursor:pointer;'; cancel.textContent='Keep this version'; cancel.onclick=function(){ov.remove();}; sheet.appendChild(cancel); ov.appendChild(sheet); ov.onclick=function(e){if(e.target===ov)ov.remove();}; }
 
 function render(){const app=document.getElementById('app');app.innerHTML='';({home:renderHome,type:renderType,speak:renderSpeak,photos:renderPhotos,history:renderHistory,building:renderBuilding,playback:renderPlayback,error:renderError}[screen]||renderHome)(app)}
-function renderHome(app){
-  app.style.background='#0B0906';
+function renderHome(app){ app.style.background='#0B0906'; // Falling snow from top for(var i=0;i<28;i++){ var flake=document.createElement('div'); var sz=1+(i%4); var op=0.15+(i%5)*0.06; var dur=6+(i%8)*1.4; var del=-((i*1.8)%12); var left=((i*13+7)%94)+1; // Some flakes are slightly bigger and more visible var blur=i%5===0?'blur(0.5px)':''; flake.style.cssText='position:absolute;top:-10px;border-radius:50%;pointer-events:none;z-index:0;' +'width:'+sz+'px;height:'+sz+'px;' +'left:'+left+'%;' +'background:rgba(194,228,238,'+op+');' +(blur?'filter:'+blur+';':'') +'animation:snowFall '+dur+'s linear '+del+'s infinite;'; app.appendChild(flake); } var wrap=document.createElement('div'); wrap.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;z-index:1;'; app.appendChild(wrap); // Header - wordmark left, streak right var hdr=document.createElement('div'); hdr.style.cssText='width:100%;padding:52px 24px 0;display:flex;align-items:center;justify-content:space-between;'; var logo=document.createElement('div'); logo.className='logo'; logo.innerHTML='snow<span class="dot">&#9679;</span>ball'; var streak=document.createElement('div'); streak.style.cssText='display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 8px;'; streak.onclick=function(){go('history');}; var sball=document.createElement('div'); sball.className='ball'; sball.style.cssText='width:12px;height:12px;flex-shrink:0;box-shadow:'+ballShadow(12)+';'; var snum=document.createElement('span'); snum.style.cssText='font-family:var(--sans);font-size:12px;color:var(--muted);'; snum.textContent=getStreak()+' day streak'; streak.appendChild(sball);streak.appendChild(snum); hdr.appendChild(logo);hdr.appendChild(streak); wrap.appendChild(hdr); // Prompt - center, dominant var promptWrap=document.createElement('div'); promptWrap.style.cssText='flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 36px;text-align:center;'; var tagline=document.createElement('div'); tagline.style.cssText='font-family:var(--sans);font-size:12px;font-weight:500;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:20px;'; tagline.textContent='Tell your story. We\'ll make it a video worth sharing.'; promptWrap.appendChild(tagline); var promptEl=document.createElement('div'); promptEl.id='prompt-text'; promptEl.style.cssText='font-family:var(--serif);font-size:34px;font-weight:300;font-style:italic;color:var(--cream);line-height:1.3;transition:opacity 0.5s ease;margin-bottom:0;'; promptEl.textContent='"'+PROMPTS[promptIdx]+'"'; promptWrap.appendChild(promptEl); wrap.appendChild(promptWrap); // Snowball - hero, centered, large var ballSection=document.createElement('div'); ballSection.style.cssText='display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:52px;cursor:pointer;'; ballSection.onclick=function(){showInputSheet();}; // Halo var haloWrap=document.createElement('div'); haloWrap.style.cssText='position:relative;display:flex;align-items:center;justify-content:center;'; var halo=document.createElement('div'); halo.style.cssText='position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(194,228,238,0.08) 0%,transparent 70%);animation:haloPulse 3.5s ease-in-out infinite;pointer-events:none;'; var mainBall=makeBall(128,'ballFloat 4.5s ease-in-out infinite'); haloWrap.appendChild(halo); haloWrap.appendChild(mainBall); ballSection.appendChild(haloWrap); // Subtle tap hint var hint=document.createElement('div'); hint.style.cssText='font-family:var(--sans);font-size:10px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;'; hint.textContent='tap to begin'; ballSection.appendChild(hint); wrap.appendChild(ballSection); // Prompt rotation every(function(){ var el=document.getElementById('prompt-text'); if(!el)return; el.style.opacity='0'; later(function(){ promptIdx=(promptIdx+1)%PROMPTS.length; var el2=document.getElementById('prompt-text'); if(el2){el2.textContent='"'+PROMPTS[promptIdx]+'"';el2.style.opacity='1';} },500); },4800); }
 
-  // Falling snow from top
-  for(var i=0;i<28;i++){
-    var flake=document.createElement('div');
-    var sz=1+(i%4);
-    var op=0.15+(i%5)*0.06;
-    var dur=6+(i%8)*1.4;
-    var del=-((i*1.8)%12);
-    var left=((i*13+7)%94)+1;
-    // Some flakes are slightly bigger and more visible
-    var blur=i%5===0?'blur(0.5px)':'';
-    flake.style.cssText='position:absolute;top:-10px;border-radius:50%;pointer-events:none;z-index:0;'
-      +'width:'+sz+'px;height:'+sz+'px;'
-      +'left:'+left+'%;'
-      +'background:rgba(194,228,238,'+op+');'
-      +(blur?'filter:'+blur+';':'')
-      +'animation:snowFall '+dur+'s linear '+del+'s infinite;';
-    app.appendChild(flake);
-  }
-
-  var wrap=document.createElement('div');
-  wrap.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;z-index:1;';
-  app.appendChild(wrap);
-
-  // Header - wordmark left, streak right
-  var hdr=document.createElement('div');
-  hdr.style.cssText='width:100%;padding:52px 24px 0;display:flex;align-items:center;justify-content:space-between;';
-  var logo=document.createElement('div');
-  logo.className='logo';
-  logo.innerHTML='snow<span class="dot">&#9679;</span>ball';
-  var streak=document.createElement('div');
-  streak.style.cssText='display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 8px;';
-  streak.onclick=function(){go('history');};
-  var sball=document.createElement('div');
-  sball.className='ball';
-  sball.style.cssText='width:12px;height:12px;flex-shrink:0;box-shadow:'+ballShadow(12)+';';
-  var snum=document.createElement('span');
-  snum.style.cssText='font-family:var(--sans);font-size:12px;color:var(--muted);';
-  snum.textContent=getStreak()+' day streak';
-  streak.appendChild(sball);streak.appendChild(snum);
-  hdr.appendChild(logo);hdr.appendChild(streak);
-  wrap.appendChild(hdr);
-
-  // Prompt - center, dominant
-  var promptWrap=document.createElement('div');
-  promptWrap.style.cssText='flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 36px;text-align:center;';
-
-  var tagline=document.createElement('div');
-  tagline.style.cssText='font-family:var(--sans);font-size:12px;font-weight:500;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:20px;';
-  tagline.textContent='Tell your story. We\'ll make it a video worth sharing.';
-  promptWrap.appendChild(tagline);
-  var promptEl=document.createElement('div');
-  promptEl.id='prompt-text';
-  promptEl.style.cssText='font-family:var(--serif);font-size:34px;font-weight:300;font-style:italic;color:var(--cream);line-height:1.3;transition:opacity 0.5s ease;margin-bottom:0;';
-  promptEl.textContent='"'+PROMPTS[promptIdx]+'"';
-  promptWrap.appendChild(promptEl);
-  wrap.appendChild(promptWrap);
-
-  // Snowball - hero, centered, large
-  var ballSection=document.createElement('div');
-  ballSection.style.cssText='display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:52px;cursor:pointer;';
-  ballSection.onclick=function(){showInputSheet();};
-
-  // Halo
-  var haloWrap=document.createElement('div');
-  haloWrap.style.cssText='position:relative;display:flex;align-items:center;justify-content:center;';
-  var halo=document.createElement('div');
-  halo.style.cssText='position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(194,228,238,0.08) 0%,transparent 70%);animation:haloPulse 3.5s ease-in-out infinite;pointer-events:none;';
-  var mainBall=makeBall(128,'ballFloat 4.5s ease-in-out infinite');
-  haloWrap.appendChild(halo);
-  haloWrap.appendChild(mainBall);
-  ballSection.appendChild(haloWrap);
-
-  // Subtle tap hint
-  var hint=document.createElement('div');
-  hint.style.cssText='font-family:var(--sans);font-size:10px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;';
-  hint.textContent='tap to begin';
-  ballSection.appendChild(hint);
-
-  wrap.appendChild(ballSection);
-
-  // Prompt rotation
-  every(function(){
-    var el=document.getElementById('prompt-text');
-    if(!el)return;
-    el.style.opacity='0';
-    later(function(){
-      promptIdx=(promptIdx+1)%PROMPTS.length;
-      var el2=document.getElementById('prompt-text');
-      if(el2){el2.textContent='"'+PROMPTS[promptIdx]+'"';el2.style.opacity='1';}
-    },500);
-  },4800);
-}
-
-function showInputSheet(){
-  var ov=document.createElement('div');
-  ov.style.cssText='position:absolute;inset:0;z-index:20;background:rgba(6,4,2,0.85);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;animation:fadeIn 0.2s ease both;';
-  document.getElementById('app').appendChild(ov);
-
-  var sheet=document.createElement('div');
-  sheet.style.cssText='width:100%;background:#0B0906;border-radius:24px 24px 0 0;padding:28px 20px 50px;display:flex;flex-direction:column;gap:12px;animation:slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) both;';
-
-  var title=document.createElement('div');
-  title.style.cssText='font-family:var(--serif);font-size:24px;font-weight:300;font-style:italic;color:var(--cream);text-align:center;margin-bottom:4px;';
-  title.textContent='How do you want to tell it?';
-
-  var btns=[
-    {label:'🎙  Speak it',sub:'just talk',action:function(){ov.remove();go('speak');}},
-    {label:'✏️  Type it',sub:'write it out',action:function(){ov.remove();go('type');}},
-    {label:'📸  Add your photos',sub:'AI reads them',action:function(){ov.remove();userPhotos=[];go('photos');}},
-  ];
-
-  sheet.appendChild(title);
-  btns.forEach(function(b){
-    var btn=document.createElement('button');
-    btn.style.cssText='width:100%;padding:18px 20px;border-radius:16px;border:1px solid var(--dim2);background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:space-between;cursor:pointer;';
-    var left=document.createElement('div');
-    left.style.cssText='font-family:var(--sans);font-size:16px;color:var(--cream);font-weight:400;';
-    left.textContent=b.label;
-    var right=document.createElement('div');
-    right.style.cssText='font-family:var(--sans);font-size:11px;color:var(--muted);';
-    right.textContent=b.sub;
-    btn.appendChild(left);btn.appendChild(right);
-    btn.onclick=b.action;
-    sheet.appendChild(btn);
-  });
-
-  var cancel=document.createElement('div');
-  cancel.style.cssText='font-family:var(--sans);font-size:13px;color:var(--muted);text-align:center;padding:8px 0;cursor:pointer;';
-  cancel.textContent='cancel';
-  cancel.onclick=function(){ov.remove();};
-  sheet.appendChild(cancel);
-  ov.appendChild(sheet);
-  ov.onclick=function(e){if(e.target===ov)ov.remove();};
-}
+function showInputSheet(){ var ov=document.createElement('div'); ov.style.cssText='position:absolute;inset:0;z-index:20;background:rgba(6,4,2,0.85);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;animation:fadeIn 0.2s ease both;'; document.getElementById('app').appendChild(ov); var sheet=document.createElement('div'); sheet.style.cssText='width:100%;background:#0B0906;border-radius:24px 24px 0 0;padding:28px 20px 50px;display:flex;flex-direction:column;gap:12px;animation:slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) both;'; var title=document.createElement('div'); title.style.cssText='font-family:var(--serif);font-size:24px;font-weight:300;font-style:italic;color:var(--cream);text-align:center;margin-bottom:4px;'; title.textContent='How do you want to tell it?'; var btns=[ {label:'🎙  Speak it',sub:'just talk',action:function(){ov.remove();go('speak');}}, {label:'✏️  Type it',sub:'write it out',action:function(){ov.remove();go('type');}}, {label:'📸  Add your photos',sub:'AI reads them',action:function(){ov.remove();userPhotos=[];go('photos');}}, ]; sheet.appendChild(title); btns.forEach(function(b){ var btn=document.createElement('button'); btn.style.cssText='width:100%;padding:18px 20px;border-radius:16px;border:1px solid var(--dim2);background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:space-between;cursor:pointer;'; var left=document.createElement('div'); left.style.cssText='font-family:var(--sans);font-size:16px;color:var(--cream);font-weight:400;'; left.textContent=b.label; var right=document.createElement('div'); right.style.cssText='font-family:var(--sans);font-size:11px;color:var(--muted);'; right.textContent=b.sub; btn.appendChild(left);btn.appendChild(right); btn.onclick=b.action; sheet.appendChild(btn); }); var cancel=document.createElement('div'); cancel.style.cssText='font-family:var(--sans);font-size:13px;color:var(--muted);text-align:center;padding:8px 0;cursor:pointer;'; cancel.textContent='cancel'; cancel.onclick=function(){ov.remove();}; sheet.appendChild(cancel); ov.appendChild(sheet); ov.onclick=function(e){if(e.target===ov)ov.remove();}; }
 
 function renderType(app){app.style.background='#070503';app.innerHTML=`<div style="position:absolute;inset:0;display:flex;flex-direction:column;"><div style="padding:52px 24px 0;display:flex;align-items:center;justify-content:space-between;"><button id="back" style="color:var(--muted);font-family:var(--sans);font-size:13px;padding:4px 0;">← Back</button><div class="logo" style="font-size:19px;">snow<span class="dot">●</span>ball</div><div style="width:50px;"></div></div><div style="padding:22px 26px 0;"><div style="font-family:var(--serif);font-size:26px;font-style:italic;font-weight:300;color:var(--cream);line-height:1.25;">Tell me your story</div><div style="font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;">Don't edit yourself. Just write. The AI will shape it.</div></div><textarea id="story-ta" placeholder="I was somewhere I wasn't supposed to be..." style="flex:1;margin:16px 20px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid var(--dim2);color:var(--cream);font-family:var(--serif);font-size:17px;font-style:italic;font-weight:300;line-height:1.65;padding:18px 20px;caret-color:var(--gold);transition:border-color 0.3s;"></textarea><div style="padding:0 20px 44px;display:flex;flex-direction:column;gap:10px;"><div style="display:flex;justify-content:space-between;padding:0 2px;"><div id="ready-lbl" style="font-family:var(--sans);font-size:11px;color:var(--muted);">Keep writing...</div><div id="char-ct" style="font-family:var(--sans);font-size:11px;color:var(--muted);">0 chars</div></div><button id="shape-btn" class="btn-dim" style="font-size:16px;font-weight:600;padding:18px;border-radius:18px;width:100%;">Shape my story  ❄️</button></div></div>`;document.getElementById('back').onclick=()=>go('home');const ta=document.getElementById('story-ta');const btn=document.getElementById('shape-btn');const lbl=document.getElementById('ready-lbl');const ct=document.getElementById('char-ct');ta.oninput=()=>{const len=ta.value.trim().length;ct.textContent=ta.value.length+' chars';ta.style.borderColor=ta.value.length>0?'rgba(255,255,255,0.1)':'var(--dim2)';if(len>30){btn.className='btn-gold';lbl.style.color='var(--green)';lbl.textContent='✓ Ready to shape'}else{btn.className='btn-dim';lbl.style.color='var(--muted)';lbl.textContent='Keep writing...'}};btn.onclick=()=>{if(ta.value.trim().length>30){rawStory=ta.value;go('building')}};later(()=>ta.focus(),120)}
 function renderSpeak(app){app.style.background='#070503';addSnow(app,10,true);const wrap=document.createElement('div');wrap.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;z-index:1;';wrap.innerHTML=`<div style="width:100%;padding:52px 24px 0;display:flex;align-items:center;justify-content:space-between;"><button id="back" style="color:var(--muted);font-family:var(--sans);font-size:13px;padding:4px 0;">← Back</button><div id="timer" style="font-family:var(--sans);font-size:13px;font-weight:300;color:var(--muted);letter-spacing:0.12em;">0s</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:0 24px;width:100%;"><div id="status" style="font-family:var(--serif);font-size:18px;font-weight:300;font-style:italic;color:rgba(238,232,220,0.28);letter-spacing:0.06em;animation:breathe 2.4s ease-in-out infinite;min-height:26px;text-align:center;">Tap the snowball to start</div><div id="wave" style="display:flex;align-items:center;gap:3px;"></div><div id="transcript" style="display:none;font-family:var(--serif);font-size:15px;font-style:italic;color:rgba(238,232,220,0.46);text-align:center;line-height:1.55;max-height:80px;overflow:hidden;width:100%;-webkit-mask-image:linear-gradient(to bottom,black 50%,transparent 100%);mask-image:linear-gradient(to bottom,black 50%,transparent 100%);"></div><div id="ball-zone" style="position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;"><div style="position:absolute;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(194,228,238,0.10) 0%,transparent 70%);animation:haloPulse 2.2s ease-in-out infinite;pointer-events:none;"></div></div><div id="err-msg" style="display:none;font-family:var(--sans);font-size:12px;color:var(--red);text-align:center;padding:0 12px;line-height:1.5;"></div></div><div style="width:100%;padding:0 20px 12px;"><div style="position:relative;height:36px;margin-bottom:10px;"><div style="position:absolute;bottom:8px;left:0;right:0;height:2px;background:rgba(255,255,255,0.06);border-radius:1px;"></div><div style="position:absolute;bottom:4px;left:50%;width:50%;height:10px;background:rgba(229,180,68,0.10);border-radius:5px;"></div><div id="roll-ball" class="ball" style="position:absolute;bottom:0;left:0;width:18px;height:18px;transition:left 1s linear,width 0.5s,height 0.5s;box-shadow:inset -2px -2px 5px rgba(0,0,0,0.28),inset 1px 1px 3px rgba(255,255,255,0.68),0 2px 8px rgba(0,0,0,0.4);animation:rollBall 1s linear infinite paused;"></div><div style="position:absolute;bottom:0;right:0;font-family:var(--sans);font-size:10px;color:var(--muted);">tell it your way</div></div></div><div style="width:100%;padding:0 20px 44px;"><button id="done-btn" class="btn-dim" style="font-size:16px;font-weight:600;padding:18px;border-radius:18px;width:100%;">Keep talking...</button></div>`;app.appendChild(wrap);const waveEl=document.getElementById('wave');for(let i=0;i<28;i++){const mid=13.5,dist=Math.abs(i-mid)/mid;const h=Math.round(50-dist*22);const b=document.createElement('div');b.style.cssText=`width:3.5px;height:${h}px;border-radius:2px;background:var(--dim2);transform:scaleY(0.2);transform-origin:center;`;waveEl.appendChild(b)}const ballZone=document.getElementById('ball-zone');const spBall=makeBall(130,'ballFloat 4s ease-in-out infinite');ballZone.appendChild(spBall);document.getElementById('back').onclick=()=>go('home');let recog=null,listening=false,transcript='',secs=0;const timerEl=document.getElementById('timer');const statusEl=document.getElementById('status');const transEl=document.getElementById('transcript');const errEl=document.getElementById('err-msg');const doneBtn=document.getElementById('done-btn');every(()=>{secs++;timerEl.textContent=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0')},1000);function setWave(active){Array.from(waveEl.children).forEach((b,i)=>{const mid=13.5,dist=Math.abs(i-mid)/mid;const dur=(0.22+dist*0.26+(i%4)*0.06).toFixed(2);const del=((i*0.04)%0.42).toFixed(2);b.style.background=active?'var(--gold)':'var(--dim2)';b.style.transform=active?'':'scaleY(0.2)';b.style.animation=active?`waveBar ${dur}s ease-in-out ${del}s infinite alternate`:'none'})}function startRec(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){errEl.style.display='block';errEl.textContent='Speech needs Chrome/Safari. Use Type it.';return}if(recog){try{recog.abort()}catch(_){}}recog=new SR();recog.continuous=true;recog.interimResults=true;recog.lang='en-US';recog.onresult=e=>{let s='';for(let i=0;i<e.results.length;i++)s+=e.results[i][0].transcript+' ';transcript=s.trim();transEl.textContent=transcript;transEl.style.display=transcript?'block':'none';const rdy=transcript.length>20;doneBtn.className=rdy?'btn-gold':'btn-dim';doneBtn.textContent=rdy?'Shape my story  ❄️':'Keep talking...'};recog.onerror=e=>{if(e.error!=='aborted'){errEl.style.display='block';errEl.textContent='Mic: '+e.error}};recog.onstart=()=>{listening=true;setWave(true);statusEl.textContent='Rolling...';statusEl.style.color='rgba(238,232,220,0.72)';timerEl.style.color='var(--gold)';spBall.style.animation='ballPulse 1.8s ease-in-out infinite'};recog.onend=()=>{listening=false;setWave(false);statusEl.textContent='Tap to continue';statusEl.style.color='rgba(238,232,220,0.28)';timerEl.style.color='var(--muted)';spBall.style.animation='ballFloat 4s ease-in-out infinite'};recog.start()}ballZone.onclick=()=>{if(!listening)startRec()};doneBtn.onclick=()=>{if(transcript.length>10){if(recog){try{recog.stop()}catch(_){}}rawStory=transcript;go('building')}};later(startRec,300)}
