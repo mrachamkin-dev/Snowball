@@ -99,8 +99,8 @@ function resizeImageForAPI(dataUrl,maxSize){
 
 async function shapeStoryFromPhotos(photos,context){
   var resized=[];
-  for(var i=0;i<photos.length;i++){resized.push(await resizeImageForAPI(photos[i],800));}
-  const content=resized.map(d=>{const parts=d.split(',');const mt=parts[0].match(/:(.*?);/)[1];return{type:'image',source:{type:'base64',media_type:mt,data:parts[1]}};});content.push({type:'text',text:PHOTO_SYS+' Context: '+context});const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:content}]})});if(!r.ok)throw new Error('Vision error '+r.status);const d=await r.json();const txt=d.content&&d.content[0]?d.content[0].text:'';const clean=txt.replace(/```json/g,'').replace(/```/g,'').trim();try{return JSON.parse(clean);}catch(ex){const m=clean.match(/\{[\s\S]*\}/);if(m)return JSON.parse(m[0]);throw new Error('Could not read photos.');}}
+  for(var i=0;i<photos.length;i++){resized.push(await resizeImageForAPI(photos[i],512));}
+  const content=resized.map(d=>{const parts=d.split(',');const mt=parts[0].match(/:(.*?);/)[1];return{type:'image',source:{type:'base64',media_type:mt,data:parts[1]}};});content.push({type:'text',text:PHOTO_SYS+' Context: '+context});const ctrl=new AbortController();const toid=setTimeout(()=>ctrl.abort(),28000);const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:content}]}),signal:ctrl.signal}).finally(()=>clearTimeout(toid));if(!r.ok)throw new Error('Vision error '+r.status);const d=await r.json();const txt=d.content&&d.content[0]?d.content[0].text:'';const clean=txt.replace(/```json/g,'').replace(/```/g,'').trim();try{return JSON.parse(clean);}catch(ex){const m=clean.match(/\{[\s\S]*\}/);if(m)return JSON.parse(m[0]);throw new Error('Could not read photos.');}}
 
 
 async function executeVisualPlan(plan,photos,setProgFn){
