@@ -117,7 +117,7 @@ async function executeVisualPlan(plan,photos,setProgFn){
     }
     if(setProgFn)setProgFn(20+((i+1)/total)*55);
   }
-  if(images.length===0)photos.filter(Boolean).forEach(p=>images.push(p));if(images.length<4&&plan.hookImagePrompt){generateImage(plan.hookImagePrompt).then(function(u){images.push(u);});}
+  if(images.length===0)photos.filter(Boolean).forEach(p=>images.push(p));if(images.length<4&&plan.hookImagePrompt){const extraUrl=await generateImage(plan.hookImagePrompt);images.push(extraUrl);}
   const seen=new Set();const deduped=images.filter(img=>{if(seen.has(img))return false;seen.add(img);return true;});
   return deduped.length>0?deduped:images;
 }
