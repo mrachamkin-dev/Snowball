@@ -355,7 +355,7 @@ function startCaptions(narration){
     var words=narration.split(/\s+/).filter(function(w){return w.length>0;});
     if(!words.length)return;
     var dur=audio.duration||20;
-    var wpt=(dur/words.length)*1000;
+    var wpt=Math.max(400,(dur/words.length)*1000);
     var wi=0;
     function showWord(){
       if(wi>=words.length||!playing)return;
