@@ -216,7 +216,7 @@ function renderHome(app){
   snum.style.cssText='font-family:var(--sans);font-size:12px;color:var(--muted);';
   snum.textContent=getStreak()+' day streak';
   streak.appendChild(sball);streak.appendChild(snum);
-  hdr.appendChild(logo);hdr.appendChild(streak);
+  hdr.appendChild(logo);if(getHistory().length>0){hdr.appendChild(streak);}else{var sp2=document.createElement('div');sp2.style.width='50px';hdr.appendChild(sp2);}
   wrap.appendChild(hdr);
 
   // Prompt - center, dominant
@@ -237,7 +237,7 @@ function renderHome(app){
   // Snowball - hero, centered, large
   var ballSection=document.createElement('div');
   ballSection.style.cssText='display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:52px;cursor:pointer;';
-  ballSection.onclick=function(){showInputSheet();};
+  ballSection.onclick=function(){go('speak');};
 
   // Halo
   var haloWrap=document.createElement('div');
@@ -252,8 +252,8 @@ function renderHome(app){
   // Subtle tap hint
   var hint=document.createElement('div');
   hint.style.cssText='font-family:var(--sans);font-size:10px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;';
-  hint.textContent='tap to begin';
-  ballSection.appendChild(hint);
+  hint.textContent='tap to speak';
+  ballSection.appendChild(hint);var typeLink=document.createElement('div');typeLink.style.cssText='font-family:var(--sans);font-size:12px;color:var(--muted);letter-spacing:0.08em;cursor:pointer;margin-top:6px;opacity:0.7;';typeLink.textContent='or type it';typeLink.onclick=function(e){e.stopPropagation();go('type');};ballSection.appendChild(typeLink);
 
   wrap.appendChild(ballSection);
 
