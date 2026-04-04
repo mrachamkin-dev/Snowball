@@ -28,6 +28,8 @@ var SnowballMusic = (function(){
   }
 
   function fadeIn(duration){
+    masterGain.gain.cancelScheduledValues(ctx.currentTime);
+    masterGain.gain.setValueAtTime(0, ctx.currentTime);
     masterGain.gain.setTargetAtTime(0.32, ctx.currentTime, duration/3);
   }
 
