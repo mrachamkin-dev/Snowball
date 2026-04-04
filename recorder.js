@@ -16,7 +16,7 @@ async function recordStoryVideo(story,onProgress,onDone,onError){
     var stream=canvas.captureStream(FPS);
     var audioDest=audioCtx.createMediaStreamDestination();
     stream.addTrack(audioDest.stream.getAudioTracks()[0]);
-    var mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')?'video/webm;codecs=vp9,opus':'video/webm';
+    var mime=MediaRecorder.isTypeSupported('video/mp4;codecs=avc1')?'video/mp4;codecs=avc1':MediaRecorder.isTypeSupported('video/mp4')?'video/mp4':MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')?'video/webm;codecs=vp9,opus':'video/webm';
     var recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:8000000});
     var chunks=[];
     recorder.ondataavailable=function(e){if(e.data.size>0)chunks.push(e.data);};
@@ -64,7 +64,7 @@ async function recordStoryVideo(story,onProgress,onDone,onError){
     recorder.stop();onProgress(95,'Saving...');
     await new Promise(function(r){setTimeout(r,600);});
     var blob=new Blob(chunks,{type:mime});
-    onDone(URL.createObjectURL(blob),'webm');
+    var ext2=mime.includes('mp4')?'mp4':'webm';onDone(URL.createObjectURL(blob),ext2);
   }catch(err){onError(err.message||'Recording failed');}
 }
 
