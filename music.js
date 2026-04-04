@@ -9,11 +9,12 @@ var SnowballMusic = (function(){
   var fadeInterval = null;
 
   function init(){
-    if(ctx) return;
+    if(ctx){if(ctx.state==='suspended')ctx.resume();return;}
     ctx = new (window.AudioContext || window.webkitAudioContext)();
     masterGain = ctx.createGain();
     masterGain.gain.value = 0;
     masterGain.connect(ctx.destination);
+    ctx.resume();
   }
 
   function stop(){
