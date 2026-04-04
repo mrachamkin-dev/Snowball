@@ -49,7 +49,7 @@ async function recordStoryVideo(story,onProgress,onDone,onError){
     }
     onProgress(20,'Recording...');recorder.start(100);
     var src=audioCtx.createBufferSource();src.buffer=audioBuffer;
-    src.connect(audioDest);src.connect(audioCtx.destination);
+    src.connect(audioDest);
     var t0=performance.now();src.start(0);
     await new Promise(function(resolve){
       function tick(){
