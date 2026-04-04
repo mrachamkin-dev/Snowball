@@ -40,5 +40,5 @@ wrap.addEventListener("click",function(e){if(!playing&&e.target===wrap){playBtn.
 async function init(){var id=getStoryId();if(!id){renderError();return;}renderLoading();try{var story=await loadStory(id);renderStory(story);}catch(e){renderError();}}
 init();
 </script>
-</body>
+<script src="/recorder.js"></script></body>
 </html>
