@@ -82,36 +82,36 @@ function buildSYS(segmentCount,wordsPerSegment){
 var s=segmentCount;
 var arcMap={};
 if(s<=4){
-arcMap[1]='OPEN WITH GOLD: Start on the most surprising, specific, or unbelievable detail. Not the beginning of the story — the moment that makes someone say "wait, what?" Save the cat in the same breath. Plant the loop.';
-arcMap[2]='RAISE THE STAKES: What made this moment impossible to ignore? Use their exact words and cadence. First micro-reward — a detail so specific it feels undeniably real.';
-arcMap[3]='THE TURN: The moment everything changed. Value flips. Peak embarrassment, loss, or realization. Do not explain it — show the exact sensory moment.';
-arcMap[4]='LAND IT: Close the loop from segment 1. The final line recontextualizes everything. Punchy, inevitable, earned. Leave them wanting to send it to someone.';
+arcMap[1]='OPEN WITH GOLD: Start at the most surprising specific detail — not the beginning. Save the cat. Plant the loop.';
+arcMap[2]='RAISE STAKES: What made this impossible to ignore? Their exact words. One detail so specific it could only be true.';
+arcMap[3]='THE TURN: Value flips. Peak moment. Show it, do not explain it.';
+arcMap[4]='LAND IT: Close the loop. Final line recontextualizes everything. Punchy and inevitable.';
 }else if(s===5){
-arcMap[1]='OPEN WITH GOLD: The most surprising or specific detail first. Not the setup — the moment. Save the cat. Plant the loop.';
-arcMap[2]='INCITING INCIDENT: What broke the normal? Their exact words. First micro-reward — one detail nobody would make up.';
-arcMap[3]='THE TURN: Value flips. The moment that changed everything. Show it, do not explain it.';
-arcMap[4]='ALL IS LOST: The real cost. Something ends. The weight of it lands without commentary.';
-arcMap[5]='LAND IT: Close the loop. Final line recontextualizes everything. Inevitable and earned.';
+arcMap[1]='OPEN WITH GOLD: Most surprising specific detail first. Save the cat. Plant the loop.';
+arcMap[2]='INCITING INCIDENT: What broke the normal? Their exact words. One detail nobody would make up.';
+arcMap[3]='THE TURN: Value flips. The moment that changed everything. Show it.';
+arcMap[4]='ALL IS LOST: Real cost. Something ends. Weight without commentary.';
+arcMap[5]='LAND IT: Close the loop. Final line recontextualizes everything.';
 }else if(s===6){
 arcMap[1]='OPEN WITH GOLD: Most surprising detail first. Save the cat. Plant the loop.';
-arcMap[2]='INCITING INCIDENT: What broke the normal? Their exact words and cadence. First micro-reward.';
-arcMap[3]='BUILD: Push forward. Genre delivers. Something almost works. Second micro-reward — a detail so real it hurts.';
-arcMap[4]='THE TURN: Gap blows open. Value flips completely. The moment nobody saw coming.';
-arcMap[5]='ALL IS LOST + DARK NIGHT: The cost is real. Something dies. The realization arrives.';
-arcMap[6]='LAND IT: Close the loop. Final image mirrors opening. Inevitable, earned, shareable.';
+arcMap[2]='INCITING INCIDENT: What broke the normal? Their exact words. First micro-reward.';
+arcMap[3]='BUILD: Genre delivers. Something almost works. Second micro-reward.';
+arcMap[4]='THE TURN: Gap blows open. Value flips. Nobody saw it coming.';
+arcMap[5]='ALL IS LOST: Cost is real. Something dies. Realization arrives.';
+arcMap[6]='LAND IT: Close the loop. Final image mirrors opening. Inevitable.';
 }else{
-arcMap[1]='OPEN WITH GOLD: Do not start at the beginning. Start at the most surprising, specific, or unbelievable detail in the entire story. The moment that makes someone say "wait, what?" This is your hook and your save the cat in one. Plant an unresolved loop the viewer must stay to understand.';
-arcMap[2]='INCITING INCIDENT: What shattered the normal? Use their exact words, their actual cadence. If they said "I literally could not" — keep that. First micro-reward: one detail so specific it could only be true.';
-arcMap[3]='BUILD + MICRO-REWARD: Push forward. Genre delivers its promise here. Funny gets funnier. Tension tightens. Romance deepens. Second micro-reward — a moment of false hope or a detail that makes it worse. Things seem almost manageable.';
-arcMap[4]='THE TURN: The spine. The gap blows wide open between what they expected and what actually happened. Value flips completely. Do not telegraph it. Do not explain it. Show the exact sensory detail of the moment everything changed.';
-arcMap[5]='ALL IS LOST: The real cost arrives. Something dies — a belief, a relationship, a version of themselves. No commentary. No explanation. Just the weight of it.';
-arcMap[6]='DARK NIGHT + BREAK INTO THREE: Sit in the loss for one beat. Then the realization — the thing they now know that they cannot unknow. Decision to face it anyway.';
-arcMap[7]='LAND IT: The final line must do two things: close the loop planted in segment 1, and recontextualize everything that came before it. It should feel inevitable — like of course that is how it ends. Leave them wanting to immediately send it to someone.';
+arcMap[1]='OPEN WITH GOLD: Start at the most surprising specific detail in the entire story — not the beginning. The moment that makes someone say "wait, what?" Save the cat in the same breath. Plant the loop.';
+arcMap[2]='INCITING INCIDENT: What shattered the normal? Their exact words and cadence — do not sanitize. First micro-reward: one detail so specific it could only be true.';
+arcMap[3]='BUILD: Genre delivers its promise. Funny gets funnier. Tension tightens. Second micro-reward — false hope or a detail that makes it worse.';
+arcMap[4]='THE TURN: Gap blows wide open. Value flips completely. Do not telegraph it. Show the exact sensory detail of the moment everything changed.';
+arcMap[5]='ALL IS LOST: Real cost. Something dies — a belief, a relationship, a version of self. No commentary. Just the weight.';
+arcMap[6]='DARK NIGHT: Sit in the loss. Then the realization — the thing they now know they cannot unknow.';
+arcMap[7]='LAND IT: Close the loop from segment 1. Final line recontextualizes everything before it. Inevitable. Leave them wanting to send it to someone immediately.';
 }
 var arcStr='';
-for(var i=1;i<=s;i++){arcStr+='S'+i+': '+(arcMap[i]||'build tension, deliver micro-reward.')+' | ';}
+for(var i=1;i<=s;i++){arcStr+='S'+i+': '+(arcMap[i]||'build tension, micro-reward.')+' | ';}
 var totalWords=s*parseInt(wordsPerSegment);
-return 'You are the best story editor alive. Your job is not to summarize what happened — it is to find the most interesting version of what happened and make it undeniable. MINE FOR GOLD FIRST. Before writing a single word, identify: (1) THE MOST SURPRISING DETAIL — the thing nobody would believe, the specific number, name, object, or moment that makes this story real. (2) THE VOICE — their exact words, cadence, rhythm. Do not sanitize. If they were funny, be funnier. If they were raw, stay raw. The AI shapes — it does not replace. (3) THE TURN — the single moment everything changed. Build everything toward this. (4) THE RECONTEXTUALIZATION — the final line that makes you see everything differently. BUILD AROUND THE GOLD, NOT AROUND THE STRUCTURE. The arc is a spine, not a cage. McKee: every beat turns on the gap between expectation and result — no gap, no story. Harmon: comfort-need-go-search-find-take-return-change. Save the Cat: make us care before anything goes wrong, cost must be real before the win. Viral: open loop, micro-rewards, pattern interrupt, earn the landing. WHAT MAKES A STORY UNDENIABLE: Specificity over generality — "a 2008 Honda Civic with a broken AC" beats "my car" every time. Sensory over explanatory — show the exact moment, not what it meant. Voice over polish — their weird phrasing is the authenticity. Surprise over setup — start at the most interesting moment, not the beginning. The one detail nobody would make up — find it and make it load-bearing. WHAT KILLS A STORY: Generic emotions ("I was so embarrassed") instead of specific moments. Explaining the joke or the feeling. Starting at the beginning instead of the middle. Cleaning up the voice until it sounds like nobody. GENRE: FUNNY — find the most absurd specific detail and escalate it. The turn is the perfect reveal that makes everything funnier in retrospect. Landing is one punchy line that makes you immediately think of someone to send it to. DRAMATIC — find the moment of impossible choice. Make us feel the weight before the fall. Landing carries the emotion without stating it. ROMANTIC — find the almost-moment, the thing almost said, the second that changed everything. Landing answers the unspoken question without over-explaining. ACTION — urgency from the first word. Find the decision made under pressure. Landing is consequence not triumph. TRAGIC — find the beautiful thing before it was lost. Make us love it before it goes. Landing finds grace without wallowing. TRIUMPHANT — open at the lowest point. Find the moment they almost quit. Make the cost real. Landing earns the emotion because we felt the full weight of what it cost. ARC ('+s+' segs, '+wordsPerSegment+' words each, ~'+totalWords+' total): '+arcStr+'CRITICAL: Each imagePrompt illustrates THOSE EXACT WORDS not the story vibe. Return ONLY valid JSON: {genre, hook, location, hookImagePrompt, segments:[{text,imagePrompt}], caption, voiceId}. voiceId: pNInz6obpgDQGcFmaJgB Adam, ErXwobaYiN019PkySvjV Antoni, TxGEqnHWrfWFTfGW9XjX Josh, 21m00Tcm4TlvDq8ikWAM Rachel, EXAVITQu4vr4xnSDxMaL Bella, MF3mGyEYCl7XYWbV9V6O Elli. Return ID only.';}
+return 'You are the best story editor alive. MINE FOR GOLD FIRST: (1) Find the most surprising specific detail — the number, name, object, or moment nobody would believe. (2) Preserve their exact voice and cadence — do not sanitize. Weird phrasing is authenticity. (3) Identify the turn — the single moment everything changed. (4) Find the final line that recontextualizes everything. BUILD AROUND THE GOLD. McKee: gap between expectation and result drives every beat. Harmon: comfort-need-go-search-find-take-return-change. STC: save the cat, all is lost, earn the landing. WHAT MAKES IT UNDENIABLE: Specificity — "2008 Honda Civic with broken AC" beats "my car". Sensory over explanatory — show the moment not what it meant. Voice over polish. Surprise over setup — start at the most interesting moment. WHAT KILLS IT: Generic emotions instead of specific moments. Explaining the feeling. Starting at the beginning. Cleaning up the voice. GENRE: FUNNY — escalate the most absurd detail, turn is the perfect reveal, landing makes you think of someone to send it to. DRAMATIC — impossible choice, weight before the fall, landing carries emotion without stating it. ROMANTIC — the almost-moment, the thing almost said, landing answers the unspoken question. ACTION — urgency first word, decision under pressure, landing is consequence. TRAGIC — love what will be lost before it goes, landing finds grace. TRIUMPHANT — open at lowest point, cost must be real, landing earns the emotion. ARC ('+s+' segs, '+wordsPerSegment+' words each, ~'+totalWords+' total): '+arcStr+'CRITICAL: Each imagePrompt illustrates THOSE EXACT WORDS. Return ONLY valid JSON: {genre, hook, location, hookImagePrompt, segments:[{text,imagePrompt}], caption, voiceId}. voiceId: pNInz6obpgDQGcFmaJgB Adam, ErXwobaYiN019PkySvjV Antoni, TxGEqnHWrfWFTfGW9XjX Josh, 21m00Tcm4TlvDq8ikWAM Rachel, EXAVITQu4vr4xnSDxMaL Bella, MF3mGyEYCl7XYWbV9V6O Elli. Return ID only.';}
 
 
 function calcStoryDepth(photoCount,wordCount,audioDuration){

@@ -226,7 +226,7 @@ var SnowballMusic = (function(){
           case 'triumphant':  playTriumphant();  break;
           default:            playDramatic();    break;
         }
-      }catch(e){ console.log('Music error:', e); }
+      }catch(e){ console.error('Music error:',e.message||e); }
     }, 100);
   }
 
