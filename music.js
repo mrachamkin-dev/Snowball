@@ -28,7 +28,7 @@ var SnowballMusic = (function(){
   }
 
   function fadeIn(duration){
-    masterGain.gain.setTargetAtTime(0.18, ctx.currentTime, duration/3);
+    masterGain.gain.setTargetAtTime(0.32, ctx.currentTime, duration/3);
   }
 
   function osc(freq, type, gainVal, startTime, detune){
@@ -212,6 +212,7 @@ var SnowballMusic = (function(){
 
   function play(genre){
     stop();
+    if(ctx&&ctx.state==='suspended')ctx.resume();
     setTimeout(function(){
       try{
         switch(genre){
