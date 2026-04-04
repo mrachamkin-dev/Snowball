@@ -372,12 +372,13 @@ function startCaptions(narration){
     var words=narration.split(/\s+/).filter(function(w){return w.length>0;});
     if(!words.length)return;
     var dur=audio.duration||20;
-    var wpt=Math.max(400,(dur/words.length)*1000);
-    var wi=0;
+    var chunkSize=3;var chunks=[];for(var ci=0;ci<words.length;ci+=chunkSize){chunks.push(words.slice(ci,ci+chunkSize).join(' '));}
+    var cpt=Math.max(800,(dur/chunks.length)*1000);
+    var chi=0;
     function showWord(){
-      if(wi>=words.length||!playing)return;
-      if(cw){cw.style.animation='none';void cw.offsetWidth;cw.textContent=words[wi];cw.style.animation='captionPop 0.12s cubic-bezier(0.34,1.56,0.64,1) both';}
-      wi++;captionTimer=setTimeout(showWord,wpt);
+      if(chi>=chunks.length||!playing)return;
+      if(cw){cw.style.animation='none';void cw.offsetWidth;cw.textContent=chunks[chi];cw.style.animation='captionPop 0.12s cubic-bezier(0.34,1.56,0.64,1) both';}
+      chi++;captionTimer=setTimeout(showWord,cpt);
     }
     showWord();
   }
