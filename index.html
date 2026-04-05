@@ -69,7 +69,7 @@ async function generateSpeech(text,voiceId){
   const r=await fetch('/api/voice?voice='+(voiceId||'pNInz6obpgDQGcFmaJgB'),{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({text,model_id:'eleven_monolingual_v1',voice_settings:{stability:0.5,similarity_boost:0.75}})
+    body:JSON.stringify({text,model_id:'eleven_multilingual_v2',voice_settings:{stability:0.5,similarity_boost:0.75}})
   });
   if(!r.ok)throw new Error('Voice error '+r.status);
   const blob=await r.blob();
@@ -82,34 +82,35 @@ var arcMap={};
 if(s<=4){
 arcMap[1]='OPEN WITH GOLD: Start at the most surprising specific detail — not the beginning. Save the cat. Plant the loop.';
 arcMap[2]='RAISE STAKES: What made this impossible to ignore? Their exact words. One detail so specific it could only be true.';
-arcMap[3]='THE TURN: Value flips. Peak moment. Show it, do not explain it.';
-arcMap[4]='LAND IT: Close the loop. Final line recontextualizes everything. Punchy and inevitable.';
+arcMap[3]='THE TURN: Value flips. Peak moment. Show it, do not explain it. Build tension then leave it unresolved for one beat.';
+arcMap[4]='LAND IT: Close the loop. LANDING RULES: final sentence must be 8 words or fewer, declarative not questioning, reveals not explains, contrasts or resolves what came before, feels like a line someone would quote or say to a friend immediately. Second-to-last sentence builds tension toward it. The final sentence is the only thing they remember.';
 }else if(s===5){
 arcMap[1]='OPEN WITH GOLD: Most surprising specific detail first. Save the cat. Plant the loop.';
 arcMap[2]='INCITING INCIDENT: What broke the normal? Their exact words. One detail nobody would make up.';
 arcMap[3]='THE TURN: Value flips. The moment that changed everything. Show it.';
-arcMap[4]='ALL IS LOST: Real cost. Something ends. Weight without commentary.';
-arcMap[5]='LAND IT: Close the loop. Final line recontextualizes everything.';
+arcMap[4]='ALL IS LOST: Real cost. Something ends. Weight without commentary. Second-to-last sentence builds toward the landing.';
+arcMap[5]='LAND IT: Close the loop. LANDING RULES: 8 words or fewer, declarative, reveals not explains, quotable. Must feel inevitable.';
 }else if(s===6){
 arcMap[1]='OPEN WITH GOLD: Most surprising detail first. Save the cat. Plant the loop.';
 arcMap[2]='INCITING INCIDENT: What broke the normal? Their exact words. First micro-reward.';
 arcMap[3]='BUILD: Genre delivers. Something almost works. Second micro-reward.';
 arcMap[4]='THE TURN: Gap blows open. Value flips. Nobody saw it coming.';
-arcMap[5]='ALL IS LOST: Cost is real. Something dies. Realization arrives.';
-arcMap[6]='LAND IT: Close the loop. Final image mirrors opening. Inevitable.';
+arcMap[5]='ALL IS LOST: Cost is real. Something dies. Build tension in final line of this segment toward the landing.';
+arcMap[6]='LAND IT: Close the loop. LANDING RULES: 8 words or fewer, declarative, reveals not explains, quotable, inevitable.';
 }else{
 arcMap[1]='OPEN WITH GOLD: Start at the most surprising specific detail in the entire story — not the beginning. The moment that makes someone say "wait, what?" Save the cat in the same breath. Plant the loop.';
 arcMap[2]='INCITING INCIDENT: What shattered the normal? Their exact words and cadence — do not sanitize. First micro-reward: one detail so specific it could only be true.';
 arcMap[3]='BUILD: Genre delivers its promise. Funny gets funnier. Tension tightens. Second micro-reward — false hope or a detail that makes it worse.';
 arcMap[4]='THE TURN: Gap blows wide open. Value flips completely. Do not telegraph it. Show the exact sensory detail of the moment everything changed.';
 arcMap[5]='ALL IS LOST: Real cost. Something dies — a belief, a relationship, a version of self. No commentary. Just the weight.';
-arcMap[6]='DARK NIGHT: Sit in the loss. Then the realization — the thing they now know they cannot unknow.';
-arcMap[7]='LAND IT: Close the loop from segment 1. Final line recontextualizes everything before it. Inevitable. Leave them wanting to send it to someone immediately.';
+arcMap[6]='DARK NIGHT: Sit in the loss. Then the realization. Build tension in the final line of this segment — it feeds directly into the landing.';
+arcMap[7]='LAND IT: Close the loop from segment 1. LANDING RULES — follow these exactly: (1) Final sentence is 8 words or fewer. (2) Declarative not questioning. (3) Reveals do not explain. (4) Contrasts or resolves what came before. (5) Feels like a line someone would quote or immediately send to a friend. (6) Must feel inevitable — of course that is how it ends. RHYTHM: The second-to-last sentence in segment 6 builds tension. Then silence. Then this lands.';
 }
 var arcStr='';
 for(var i=1;i<=s;i++){arcStr+='S'+i+': '+(arcMap[i]||'build tension, micro-reward.')+' | ';}
 var totalWords=s*parseInt(wordsPerSegment);
-return 'You are the best story editor alive. MINE FOR GOLD FIRST: (1) Find the most surprising specific detail — the number, name, object, or moment nobody would believe. (2) Preserve their exact voice and cadence — do not sanitize. Weird phrasing is authenticity. (3) Identify the turn — the single moment everything changed. (4) Find the final line that recontextualizes everything. BUILD AROUND THE GOLD. McKee: gap between expectation and result drives every beat. Harmon: comfort-need-go-search-find-take-return-change. STC: save the cat, all is lost, earn the landing. WHAT MAKES IT UNDENIABLE: Specificity — "2008 Honda Civic with broken AC" beats "my car". Sensory over explanatory — show the moment not what it meant. Voice over polish. Surprise over setup — start at the most interesting moment. WHAT KILLS IT: Generic emotions instead of specific moments. Explaining the feeling. Starting at the beginning. Cleaning up the voice. GENRE: FUNNY — escalate the most absurd detail, turn is the perfect reveal, landing makes you think of someone to send it to. DRAMATIC — impossible choice, weight before the fall, landing carries emotion without stating it. ROMANTIC — the almost-moment, the thing almost said, landing answers the unspoken question. ACTION — urgency first word, decision under pressure, landing is consequence. TRAGIC — love what will be lost before it goes, landing finds grace. TRIUMPHANT — open at lowest point, cost must be real, landing earns the emotion. ARC ('+s+' segs, '+wordsPerSegment+' words each, ~'+totalWords+' total): '+arcStr+'CRITICAL: Each imagePrompt illustrates THOSE EXACT WORDS. Return ONLY valid JSON: {genre, hook, location, hookImagePrompt, segments:[{text,imagePrompt}], caption, voiceId}. voiceId: pNInz6obpgDQGcFmaJgB Adam, ErXwobaYiN019PkySvjV Antoni, TxGEqnHWrfWFTfGW9XjX Josh, 21m00Tcm4TlvDq8ikWAM Rachel, EXAVITQu4vr4xnSDxMaL Bella, MF3mGyEYCl7XYWbV9V6O Elli. Return ID only.';}
+var genreEndings='GENRE LANDING TEMPLATES — use these as models for the right rhythm and weight: FUNNY: "Yeah. That did not go how I planned." / "Turns out I was the problem the whole time." / "I should have just stayed home." — reversal + self-awareness, punchy, makes you want to send it. DRAMATIC: "I never saw him again." / "That was the last time." / "I was not ready for that." — simple declarative, emotional truth, no explanation. ROMANTIC: "She stayed." / "That was when I knew." / "Neither of us let go." — action not feeling, answers the unspoken question without over-explaining. ACTION: "It was already over." / "He made his choice." / "There was nowhere left to run." — consequence not triumph, inevitability. TRAGIC: "The table was still set for two." / "I kept the voicemail." / "Some things do not come back." — one specific image holds all the weight. TRIUMPHANT: "My hands would not stop shaking for a week." / "I had never felt so small and so certain at the same time." — earned through specificity of cost, not celebration.';
+return 'You are the best story editor alive. MINE FOR GOLD FIRST: (1) Find the most surprising specific detail — the thing nobody would believe, the number, name, object, or moment that makes this real. (2) Preserve their exact voice and cadence — do not sanitize. Weird phrasing is authenticity. (3) Identify the turn — the single moment everything changed. (4) KNOW THE FINAL LINE BEFORE YOU WRITE WORD ONE. Work backward from it. BUILD AROUND THE GOLD. McKee: gap between expectation and result drives every beat. Harmon: comfort-need-go-search-find-take-return-change. STC: save the cat, all is lost, earn the landing. WHAT MAKES IT UNDENIABLE: Specificity — "2008 Honda Civic with broken AC" beats "my car". Sensory over explanatory. Voice over polish. Start at the most interesting moment not the beginning. WHAT KILLS IT: Generic emotions instead of specific moments. Explaining the feeling. Starting at the beginning. Cleaning up the voice. Endings that go on too long after the turn. '+genreEndings+' ARC ('+s+' segs, '+wordsPerSegment+' words each, ~'+totalWords+' total): '+arcStr+'CRITICAL: Each imagePrompt illustrates THOSE EXACT WORDS. Return ONLY valid JSON: {genre, hook, location, hookImagePrompt, segments:[{text,imagePrompt}], caption, voiceId}. voiceId: pNInz6obpgDQGcFmaJgB Adam, ErXwobaYiN019PkySvjV Antoni, TxGEqnHWrfWFTfGW9XjX Josh, 21m00Tcm4TlvDq8ikWAM Rachel, EXAVITQu4vr4xnSDxMaL Bella, MF3mGyEYCl7XYWbV9V6O Elli. Return ID only.';}
 
 
 function calcStoryDepth(photoCount,wordCount,audioDuration){
@@ -123,7 +124,7 @@ if(depth===3)return {segmentCount:6,wordsPerSegment:'13-17'};
 return {segmentCount:7,wordsPerSegment:'15-20'};
 }
 
-async function shapeStory(raw,genreHint,depth){if(genreHint){raw=raw+' [Shape this as a '+genreHint+' story using that genre structure]';}var d=depth||calcStoryDepth(0,(raw||"").split(/\s+/).length,0);var SYS=buildSYS(d.segmentCount,d.wordsPerSegment);const text=await callClaude(SYS,raw);const clean=text.replace(/\x60\x60\x60json\s*/g,'').replace(/\x60\x60\x60\s*/g,'').trim();var parsed;try{parsed=JSON.parse(clean);}catch(ex){const m=clean.match(/\{[\s\S]*\}/);if(m)parsed=JSON.parse(m[0]);else throw new Error('Could not shape story');}if(parsed.segments&&parsed.segments.length){parsed.narration=parsed.segments.map(function(s){return s.text||'';}).join(' ').trim();parsed.scenes=parsed.segments.map(function(s){return {beat:'scene',imagePrompt:s.imagePrompt||''};});}parsed._segments=parsed.segments||[];return parsed;}
+async function shapeStory(raw,genreHint,depth){if(genreHint){raw=raw+' [Shape this as a '+genreHint+' story using that genre structure]';}var d=depth||calcStoryDepth(0,(raw||"").split(/\s+/).length,0);var SYS=buildSYS(d.segmentCount,d.wordsPerSegment);const text=await callClaude(SYS,raw);const clean=text.replace(/\x60\x60\x60json\s*/g,'').replace(/\x60\x60\x60\s*/g,'').trim();var parsed;try{parsed=JSON.parse(clean);}catch(ex){const m=clean.match(/\{[\s\S]*\}/);if(m)parsed=JSON.parse(m[0]);else throw new Error('Could not shape story');}if(parsed.segments&&parsed.segments.length){var segs=parsed.segments;var narParts=segs.map(function(s,i){var t=s.text||'';return (i===segs.length-1&&t)?'<break time="400ms"/>'+t:t;});parsed.narration=narParts.join(' ').trim();parsed.scenes=segs.map(function(s){return {beat:'scene',imagePrompt:s.imagePrompt||''};});}parsed._segments=parsed.segments||[];return parsed;}
 const PHOTO_SYS="You are a viral story editor and visual director. The user has shared real photos. Extract: (1) VISUAL STYLE: lighting, color tone, mood from photos. (2) CHARACTER: physical description of any person in photos. Use these to ensure ai_generate prompts match the photo aesthetic and character. Return ONLY valid JSON: {hook, location, narration (1-2 photos=40-60 words, 3-4 photos=70-90 words, opens with hook, warm cinematic specific), visualStyle (2 sentences describing photo aesthetic), characterDescription (1 sentence), hookImagePrompt (match visual style and character, no text), caption (TikTok tease + 4 hashtags under 160 chars), visualPlan: array of {type: user_photo|ai_generate|ai_from_reference, photoIndex (for user_photo/ai_from_reference), imagePrompt (for ai_generate/ai_from_reference, match visualStyle and characterDescription), reason}}";
 
 function resizeImageForAPI(dataUrl,maxSize,quality){
