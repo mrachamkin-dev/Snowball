@@ -49,9 +49,7 @@ textarea{resize:none;border:none;outline:none}
 <div id="app"></div>
 <script>
 const FAL_KEY='8e2003f2-661b-4b86-8b92-fd5f86be8ab1:aa1eb177dc4e41736dbf18d212b0865f';
-const EL_KEY='sk_a4d8587b201664b10a28cb95b6964e9e05c22334eb8c033d';
-const EL_VOICE='TX3LPaxmHKxFdv7VOQHJ';
-let screen='home',promptIdx=0,rawStory='',story=null,errorMsg='',userPhotos=[],currentGenre=null,forcedGenre=null,_audioDuration=0,_visualStyle=null;
+let screen='home',promptIdx=0,rawStory='',story=null,errorMsg='',userPhotos=[],currentGenre=null,forcedGenre=null,_audioDuration=0,_visualStyle=null,activeListeners=[];
 let _timers=[];
 function clearAll(){_timers.forEach(t=>{clearTimeout(t);clearInterval(t)});_timers=[]}
 function later(fn,ms){const t=setTimeout(fn,ms);_timers.push(t);return t}
