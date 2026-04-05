@@ -56,7 +56,7 @@ function clearAll(){_timers.forEach(t=>{clearTimeout(t);clearInterval(t)});_time
 function later(fn,ms){const t=setTimeout(fn,ms);_timers.push(t);return t}
 function every(fn,ms){const t=setInterval(fn,ms);_timers.push(t);return t}
 function go(s){clearAll();screen=s;render()}
-const PROMPTS=['What\'s your "you had to be there" story?','What\'s a story your friends always bring up about you?','What happened on your best night out?','What\'s that moment your group never lets you forget?','What\'s a story that still makes you laugh every time you tell it?','What\'s your "how we met" story?'];
+const PROMPTS=['What\'s your "you had to be there" story?','What\'s a story your friends always bring up about you?','What happened on your best night out?','What\'s that moment your group never lets you forget?','What\'s your favorite story to tell about your friends?','What\'s your "how we met" story?'];
 const BUILD_STEPS=["Finding your story's spine...",'Choosing your moments...','Painting your world...','Finding your voice...','Almost ready...'];
 const KB=['kenBurns1','kenBurns2','kenBurns3','kenBurns4'];
 function ballShadow(s){return[`inset ${-s*.14}px ${-s*.12}px ${s*.30}px rgba(0,0,0,0.30)`,`inset ${s*.06}px ${s*.06}px ${s*.18}px rgba(255,255,255,0.70)`,`0 ${s*.14}px ${s*.46}px rgba(0,0,0,0.60)`,`0 0 ${s*.46}px rgba(194,228,238,0.20)`].join(',')}
