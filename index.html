@@ -263,17 +263,17 @@ function renderHome(app){
   tagline.style.cssText='font-family:var(--sans);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0.16em;text-transform:uppercase;text-align:center;padding:18px 36px 0;';
   tagline.textContent='Your story. A video worth throwing.';
   overlay.appendChild(tagline);
-  var promptWrap=document.createElement('div');
-  promptWrap.style.cssText='padding:10px 36px 0;text-align:center;';
-  var promptEl=document.createElement('div');
-  promptEl.id='prompt-text';
-  promptEl.style.cssText='font-family:var(--serif);font-size:28px;font-weight:300;font-style:italic;color:var(--cream);line-height:1.35;transition:opacity 0.5s ease;';
-  promptEl.textContent='"'+PROMPTS[promptIdx]+'"';
-  promptWrap.appendChild(promptEl);
-  overlay.appendChild(promptWrap);
   var hSpacer=document.createElement('div');
   hSpacer.style.flex='1';
   overlay.appendChild(hSpacer);
+  var promptWrap=document.createElement('div');
+  promptWrap.style.cssText='padding:0 36px 52px;text-align:center;';
+  var promptEl=document.createElement('div');
+  promptEl.id='prompt-text';
+  promptEl.style.cssText='font-family:var(--serif);font-size:28px;font-weight:300;font-style:italic;color:var(--cream);line-height:1.35;transition:opacity 0.5s ease;';
+  var tagSmall=document.createElement('div');tagSmall.style.cssText='font-family:var(--sans);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:12px;';tagSmall.textContent='Share your story.';promptWrap.appendChild(tagSmall);promptEl.textContent='"'+PROMPTS[promptIdx]+'"';
+  promptWrap.appendChild(promptEl);
+  overlay.appendChild(promptWrap);
   var hCtx=hCanvas.getContext('2d');
   var hW=0,hH=0,hOrbR=0,hOrbCX=0,hOrbCY=0;
   function hResize(){hW=hCanvas.width=hCanvas.offsetWidth*2;hH=hCanvas.height=hCanvas.offsetHeight*2;hOrbCX=hW/2;hOrbR=Math.min(hW,hH)*.175;hOrbCY=hH*.46;}
