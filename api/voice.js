@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'xi-api-key': 'sk_77836996a6fc455c23c5ece694f311e4d6331f2058b65e09'
+      'xi-api-key': process.env.ELEVENLABS_API_KEY||'sk_77836996a6fc455c23c5ece694f311e4d6331f2058b65e09'
     },
     body: JSON.stringify(req.body),
   });
