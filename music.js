@@ -7,6 +7,7 @@ var SnowballMusic = (function(){
   var masterGain = null;
   var activeNodes = [];
   var fadeInterval = null;
+  var generation = 0;
 
   function init(){
     if(ctx){if(ctx.state==='suspended')ctx.resume();return;}
@@ -20,10 +21,14 @@ var SnowballMusic = (function(){
   function stop(){
     if(fadeInterval) clearInterval(fadeInterval);
     if(!masterGain) return;
+    generation++;
+    var myGen=generation;
     masterGain.gain.setTargetAtTime(0, ctx.currentTime, 0.5);
+    var nodesToStop=activeNodes.slice();
+    activeNodes=[];
     setTimeout(function(){
-      activeNodes.forEach(function(n){ try{ n.stop(); }catch(e){} });
-      activeNodes = [];
+      if(generation!==myGen)return;
+      nodesToStop.forEach(function(n){ try{ n.stop(); }catch(e){} });
     }, 1000);
   }
 
