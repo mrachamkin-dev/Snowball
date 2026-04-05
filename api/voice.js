@@ -16,3 +16,4 @@ module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'audio/mpeg');
   res.status(r.status).send(Buffer.from(buffer));
 };
+// updated Sat Apr  4 23:12:45 EDT 2026
