@@ -6,7 +6,8 @@
     "api/share.js": { "maxDuration": 30 },
     "api/story.js": { "maxDuration": 30 },
     "api/music.js": { "maxDuration": 120 },
-    "api/track.js": { "maxDuration": 10 }
+    "api/track.js": { "maxDuration": 10 },
+    "api/render.js": { "maxDuration": 120 }
   },
   "rewrites": [
     { "source": "/s/:id", "destination": "/player.html" }
