@@ -315,7 +315,36 @@ function renderHome(app){
   hint.textContent='tap to begin';
   ballSection.appendChild(hint);
 
+  var STORY_PROMPTS=[
+    "Tell us your most embarrassing moment.",
+    "What happened that you still can't explain?",
+    "What's the story you always tell at parties?",
+    "What moment changed everything?",
+    "Tell us the one that got away.",
+    "What did you almost get away with?",
+    "Tell us about the worst timing of your life.",
+    "What's the thing you wish you'd done differently?"
+  ];
+  var storyPromptEl=document.createElement('div');
+  storyPromptEl.id='story-prompt';
+  storyPromptEl.style.cssText='font-family:var(--sans);font-size:11px;color:var(--muted);letter-spacing:0.1em;text-align:center;margin-top:8px;transition:opacity 0.5s ease;min-height:18px;';
+  storyPromptEl.textContent=STORY_PROMPTS[Math.floor(Math.random()*STORY_PROMPTS.length)];
+  ballSection.appendChild(storyPromptEl);
+
   wrap.appendChild(ballSection);
+
+  // Story prompt rotation
+  var _spi=0;
+  every(function(){
+    var sp=document.getElementById('story-prompt');
+    if(!sp)return;
+    sp.style.opacity='0';
+    later(function(){
+      _spi=(_spi+1)%STORY_PROMPTS.length;
+      var sp2=document.getElementById('story-prompt');
+      if(sp2){sp2.textContent=STORY_PROMPTS[_spi];sp2.style.opacity='1';}
+    },500);
+  },4000);
 
   // Prompt rotation
   every(function(){
