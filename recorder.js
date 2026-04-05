@@ -37,7 +37,7 @@ async function recordStoryVideo(story,onProgress,onDone,onError){
       var bg=ctx.createLinearGradient(0,H-500,0,H);bg.addColorStop(0,'rgba(0,0,0,0)');bg.addColorStop(1,'rgba(0,0,0,0.92)');ctx.fillStyle=bg;ctx.fillRect(0,H-500,W,500);
       ctx.fillStyle='rgba(238,232,220,0.55)';ctx.font='38px '+SF;ctx.textAlign='left';ctx.fillText('snow●ball',60,100);
       var ho=t<1.5?t/1.5:(t<3.5?1:(t<5?1-(t-3.5)/1.5:0));ctx.globalAlpha=ho;
-      if(story.location){ctx.fillStyle='#E5B444';ctx.font='500 30px '+SS;ctx.textAlign='center';ctx.fillText((story.location||'').toUpperCase(),W/2,H/2-90);}
+      if(story.location){ctx.fillStyle='#E5B444';ctx.font='500 26px '+SS;ctx.textAlign='center';ctx.fillText((story.location||'').toUpperCase(),W/2,H/2-200);}
       ctx.fillStyle='#EEE8DC';ctx.font='300 72px '+SF;ctx.textAlign='center';
       var words=(story.hook||'').split(' ');var line='';var lines=[];var maxW=W-120;
       for(var wi=0;wi<words.length;wi++){var test=line+(line?' ':'')+words[wi];if(ctx.measureText(test).width>maxW&&line){lines.push(line);line=words[wi];}else{line=test;}}
