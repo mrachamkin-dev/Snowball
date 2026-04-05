@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'xi-api-key': 'a4d8587b201664b10a28cb95b6964e9e05c22334eb8c033d'
+      'xi-api-key': 'sk_a4d8587b201664b10a28cb95b6964e9e05c22334eb8c033d'
     },
     body: JSON.stringify(req.body),
   });
