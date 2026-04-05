@@ -6,9 +6,9 @@
 <title>Snowball</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0B0906;--deep:#070503;--gold:#E5B444;--ice:#C2E4EE;--cream:#EEE8DC;--muted:#635850;--dim2:#2A2318;--black:#060402;--red:#E05A44;--green:#4AC98C;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Plus Jakarta Sans',system-ui,sans-serif}
+:root{--bg:#0B0906;--deep:#070503;--gold:#E5B444;--ice:#C2E4EE;--cream:#EEE8DC;--muted:#635850;--dim2:#2A2318;--black:#060402;--red:#E05A44;--green:#4AC98C;--serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;background:var(--bg);overflow:hidden}
 body{font-family:var(--sans);-webkit-font-smoothing:antialiased}
@@ -259,10 +259,10 @@ function renderHome(app){
   streak.appendChild(sball);streak.appendChild(snum);
   hdr.appendChild(logo);hdr.appendChild(streak);
   overlay.appendChild(hdr);
-  var tagline=document.createElement('div');
-  tagline.style.cssText='font-family:var(--sans);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0.16em;text-transform:uppercase;text-align:center;padding:18px 36px 0;';
-  tagline.textContent='Your story. A video worth throwing.';
-  overlay.appendChild(tagline);
+  var tagTop=document.createElement('div');
+  tagTop.style.cssText='font-family:var(--sans);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;text-align:center;padding:14px 36px 0;';
+  tagTop.textContent='Share your story.';
+  overlay.appendChild(tagTop);
   var hSpacer=document.createElement('div');
   hSpacer.style.flex='1';
   overlay.appendChild(hSpacer);
@@ -271,7 +271,7 @@ function renderHome(app){
   var promptEl=document.createElement('div');
   promptEl.id='prompt-text';
   promptEl.style.cssText='font-family:var(--serif);font-size:28px;font-weight:300;font-style:italic;color:var(--cream);line-height:1.35;transition:opacity 0.5s ease;';
-  var tagSmall=document.createElement('div');tagSmall.style.cssText='font-family:var(--sans);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:12px;';tagSmall.textContent='Share your story.';promptWrap.appendChild(tagSmall);promptEl.textContent='"'+PROMPTS[promptIdx]+'"';
+  promptEl.textContent='"'+PROMPTS[promptIdx]+'"';
   promptWrap.appendChild(promptEl);
   overlay.appendChild(promptWrap);
   var hCtx=hCanvas.getContext('2d');
