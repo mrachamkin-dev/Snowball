@@ -259,17 +259,21 @@ function renderHome(app){
   streak.appendChild(sball);streak.appendChild(snum);
   hdr.appendChild(logo);hdr.appendChild(streak);
   overlay.appendChild(hdr);
-  var hSpacer=document.createElement('div');
-  hSpacer.style.flex='1';
-  overlay.appendChild(hSpacer);
+  var tagline=document.createElement('div');
+  tagline.style.cssText='font-family:var(--sans);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0.16em;text-transform:uppercase;text-align:center;padding:18px 36px 0;';
+  tagline.textContent='Your story. A video worth throwing.';
+  overlay.appendChild(tagline);
   var promptWrap=document.createElement('div');
-  promptWrap.style.cssText='padding:0 36px 90px;text-align:center;';
+  promptWrap.style.cssText='padding:10px 36px 0;text-align:center;';
   var promptEl=document.createElement('div');
   promptEl.id='prompt-text';
   promptEl.style.cssText='font-family:var(--serif);font-size:28px;font-weight:300;font-style:italic;color:var(--cream);line-height:1.35;transition:opacity 0.5s ease;';
   promptEl.textContent='"'+PROMPTS[promptIdx]+'"';
   promptWrap.appendChild(promptEl);
   overlay.appendChild(promptWrap);
+  var hSpacer=document.createElement('div');
+  hSpacer.style.flex='1';
+  overlay.appendChild(hSpacer);
   var hCtx=hCanvas.getContext('2d');
   var hW=0,hH=0,hOrbR=0,hOrbCX=0,hOrbCY=0;
   function hResize(){hW=hCanvas.width=hCanvas.offsetWidth*2;hH=hCanvas.height=hCanvas.offsetHeight*2;hOrbCX=hW/2;hOrbR=Math.min(hW,hH)*.175;hOrbCY=hH*.46;}
@@ -309,7 +313,7 @@ function renderHome(app){
     hCtx.save();hCtx.beginPath();hCtx.arc(x,y,r,0,Math.PI*2);hCtx.clip();
     var hx=x-r*.38,hy=y-r*.42;
     var bd=hCtx.createRadialGradient(hx,hy,r*.01,x+r*.18,y+r*.22,r*1.12);
-    bd.addColorStop(0,'rgba(255,255,255,0.99)');bd.addColorStop(.08,'rgba(244,251,255,0.97)');bd.addColorStop(.22,'rgba(234,246,253,0.92)');bd.addColorStop(.45,'rgba(220,238,250,0.80)');bd.addColorStop(.68,'rgba(205,226,244,0.58)');bd.addColorStop(.85,'rgba(188,212,235,0.30)');bd.addColorStop(1,'rgba(168,198,225,0.10)');
+    bd.addColorStop(0,'rgba(255,255,255,0.99)');bd.addColorStop(.08,'rgba(244,251,255,0.97)');bd.addColorStop(.22,'rgba(234,246,253,0.92)');bd.addColorStop(.45,'rgba(220,238,250,0.80)');bd.addColorStop(.68,'rgba(215,233,248,0.72)');bd.addColorStop(.85,'rgba(200,220,240,0.44)');bd.addColorStop(1,'rgba(180,208,230,0.18)');
     hCtx.fillStyle=bd;hCtx.fillRect(x-r-2,y-r-2,r*2+4,r*2+4);
     var ci=.18+e*.14+Math.sin(hT*.028)*.04;
     var co=hCtx.createRadialGradient(x+r*.04,y+r*.02,0,x+r*.04,y+r*.02,r*.58);
@@ -359,9 +363,9 @@ function renderHome(app){
     var fy=Math.sin(hT*.02)*7*(1-hEnergy*.7);
     hOrb(hOrbCX,hOrbCY+fy,hOrbR,hEnergy);
     var ta=.28+Math.sin(hT*.04)*.14+hEnergy*.25;
-    hCtx.textAlign='center';hCtx.font='400 '+(hH*.022)+'px sans-serif';
-    hCtx.fillStyle='rgba(229,180,68,'+ta+')';
-    hCtx.fillText('tap to begin',hW/2,hH*.9);
+    hCtx.textAlign='center';hCtx.font='500 '+(hH*.028)+'px sans-serif';
+    hCtx.fillStyle='rgba(238,232,220,'+Math.min(ta+.2,0.75)+')';
+    hCtx.fillText('tap to begin',hW/2,hOrbCY+hOrbR+56);
     hT++;requestAnimationFrame(hLoop);
   }
   hLoop();
