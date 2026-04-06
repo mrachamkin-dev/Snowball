@@ -171,7 +171,7 @@ async function executeVisualPlan(plan,photos,setProgFn,maxImages){
     if(step.type==='user_photo'&&photos[step.photoIndex]){
       images.push(photos[step.photoIndex]);
     } else if(step.type==='ai_generate'||step.type==='ai_from_reference'){
-      var _charDesc=window._characterDescription||'';
+      var _hasUserPhotos=photos&&photos.filter(Boolean).length>0;var _charDesc=_hasUserPhotos?'':window._characterDescription||'';
       var _promptWithChar=_charDesc?_charDesc+'. '+step.imagePrompt:step.imagePrompt;
       const url=await generateImage(_promptWithChar,false,_visualStyle);
       images.push(url);
