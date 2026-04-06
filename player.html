@@ -40,25 +40,22 @@ button{cursor:pointer;border:none;background:none;font-family:var(--sans)}
 (function(){
 var id=window.location.pathname.match(/\/s\/([a-z0-9]+)/i);
 if(!id)return;
-var key='sb_splat_'+id[1];
-var _splatWillPlay=!sessionStorage.getItem(key);
-window._splatReady=_splatWillPlay?new Promise(function(r){window._splatResolve=r;}):Promise.resolve();
-if(!_splatWillPlay)return;
-sessionStorage.setItem(key,'1');
+var _splatWillPlay=true;
+window._splatReady=new Promise(function(r){window._splatResolve=r;});
 var cv=document.getElementById('splat-canvas');
 if(!cv)return;
 var W=window.innerWidth,H=window.innerHeight;
 cv.width=W;cv.height=H;cv.style.display='block';
 var ctx=cv.getContext('2d');
 var cx=W/2,cy=H/2;
-var T1=1500,T2=130,T3=1100,T4=1100,TOTAL=T1+T2+T3+T4;
+var T1=1500,T2=220,T3=1200,T4=1100,TOTAL=T1+T2+T3+T4;
 var sparks=[],parts=[],vibrated=false,t0=null,aid=null;
 function eOut(t){return 1-Math.pow(1-t,3);}
 function ballPos(t){
 var sx=cx+W*.07,sy=H*.85,px=cx-W*.04,py=-H*.22,ex=cx,ey=cy;
 var bx=(1-t)*(1-t)*sx+2*(1-t)*t*px+t*t*ex;
 var by=(1-t)*(1-t)*sy+2*(1-t)*t*py+t*t*ey;
-var r=2.5+Math.pow(t,1.8)*Math.min(W,H)*.14;
+var r=3+Math.pow(t,1.8)*Math.min(W,H)*.20;
 return{x:bx,y:by,r:r,a:Math.min(1,t*4)};}
 function drawBall(x,y,r,a){
 if(r<.5||a<=0)return;
@@ -112,7 +109,7 @@ var g=ctx.createLinearGradient(0,0,L,0);
 g.addColorStop(0,'rgba(255,255,255,0.97)');g.addColorStop(.3,'rgba(245,253,255,0.94)');
 g.addColorStop(.7,'rgba(222,246,255,0.82)');g.addColorStop(1,'rgba(194,228,238,0.2)');
 ctx.fillStyle=g;ctx.fill();ctx.restore();}
-var sc=Math.min(W,H)/320;
+var sc=Math.min(W,H)/260;
 function initParts(){
 parts=[];
 var cmR=[];for(var i=0;i<10;i++)cmR.push((28+Math.sin(i*1.9+.5)*10+Math.random()*7)*sc);
@@ -148,8 +145,8 @@ if(s.y>-s.r)drawBall(s.x,s.y,s.r,s.a);
 }else if(el<T1+T2){var t=(el-T1)/T2;
 if(!vibrated){vibrated=true;if(navigator.vibrate)navigator.vibrate([40,20,20]);}
 if(t<.15)initParts();
-ctx.fillStyle='rgba(255,255,255,'+(1-eOut(t))*.78+')';ctx.fillRect(0,0,W,H);
-drawBall(cx,cy,Math.min(W,H)*.2+t*Math.min(W,H)*.05,1-t*.95);
+ctx.fillStyle='rgba(255,255,255,'+(1-eOut(t))*.92+')';ctx.fillRect(0,0,W,H);
+drawBall(cx,cy,Math.min(W,H)*.24+t*Math.min(W,H)*.06,1-t*.9);
 }else if(el<T1+T2+T3){var t=(el-T1-T2)/T3;
 for(var i=0;i<parts.length;i++){var p=parts[i];
 if(p.type==='center'){p.rotation+=p.rotSpd;ctx.save();ctx.globalAlpha=p.op;
