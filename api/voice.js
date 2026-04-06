@@ -1,3 +1,5 @@
+const { put } = require('@vercel/blob');
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -12,8 +14,13 @@ module.exports = async function handler(req, res) {
     },
     body: JSON.stringify(req.body),
   });
+  if (!r.ok) return res.status(r.status).json({ error: 'ElevenLabs error' });
   const buffer = await r.arrayBuffer();
-  res.setHeader('Content-Type', 'audio/mpeg');
-  res.status(r.status).send(Buffer.from(buffer));
+  const id = Math.random().toString(36).slice(2, 10);
+  const blob = await put('audio/' + id + '.mp3', Buffer.from(buffer), {
+    access: 'public',
+    contentType: 'audio/mpeg',
+    token: process.env.BLOB_READ_WRITE_TOKEN,
+  });
+  res.status(200).json({ url: blob.url, wordTimings: [] });
 };
-// updated Sat Apr  4 23:12:45 EDT 2026
