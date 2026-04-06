@@ -267,7 +267,7 @@ function renderHome(app){
   hSpacer.style.flex='1';
   overlay.appendChild(hSpacer);
   var promptWrap=document.createElement('div');
-  promptWrap.style.cssText='padding:0 36px 72px;text-align:center;';
+  promptWrap.style.cssText='padding:0 36px 44px;text-align:center;';
   var promptEl=document.createElement('div');
   promptEl.id='prompt-text';
   promptEl.style.cssText='font-family:var(--serif);font-size:28px;font-weight:300;font-style:italic;color:var(--cream);line-height:1.35;transition:opacity 0.5s ease;';
@@ -362,10 +362,7 @@ function renderHome(app){
     hSparks.forEach(function(s){s.life++;if(s.life>s.maxLife){var ox,oy;do{ox=(Math.random()-.5)*1.4;oy=(Math.random()-.5)*1.4;}while(ox*ox+oy*oy>.50);s.ox=ox;s.oy=oy;s.life=0;s.maxLife=140+Math.random()*120;s.size=.024+Math.random()*.032;s.angle=Math.random()*Math.PI;}});
     var fy=Math.sin(hT*.038)*22*(1-hEnergy*.7);
     hOrb(hOrbCX,hOrbCY+fy,hOrbR,hEnergy);
-    var ta=.28+Math.sin(hT*.04)*.14+hEnergy*.25;
-    hCtx.textAlign='center';hCtx.font='500 '+(hH*.028)+'px sans-serif';
-    hCtx.fillStyle='rgba(238,232,220,'+Math.min(ta+.2,0.75)+')';
-    hCtx.fillText('start here',hW/2,hOrbCY+hOrbR+48);
+
     hT++;requestAnimationFrame(hLoop);
   }
   hLoop();
