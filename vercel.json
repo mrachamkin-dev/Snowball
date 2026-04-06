@@ -10,6 +10,6 @@
     "api/render.js": { "maxDuration": 120 }
   },
   "rewrites": [
-    { "source": "/s/:id", "destination": "/player.html" }
+    { "source": "/s/:id", "destination": "/api/og?id=:id" }
   ]
 }
