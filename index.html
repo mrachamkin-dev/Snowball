@@ -260,14 +260,22 @@ function renderHome(app){
   hdr.appendChild(logo);hdr.appendChild(streak);
   overlay.appendChild(hdr);
   var tagTop=document.createElement('div');
-  tagTop.style.cssText='font-family:var(--sans);font-size:13px;font-weight:500;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;text-align:center;padding:32px 36px 0;';
-  tagTop.textContent='Tell your story.';
+  tagTop.style.cssText='font-family:var(--sans);font-size:13px;font-weight:500;color:rgba(130,88,80,0);letter-spacing:0.18em;text-transform:uppercase;text-align:center;padding:32px 36px 0;transition:opacity 0.6s ease;';
+  tagTop.textContent='Here\'s your snowball.';
   overlay.appendChild(tagTop);
+  later(function(){tagTop.style.color='rgba(130,88,80,0.55)';},400);
+  later(function(){
+    tagTop.style.color='rgba(130,88,80,0)';
+    later(function(){
+      tagTop.textContent='Tell your story.';
+      tagTop.style.color='rgba(130,88,80,0.55)';
+    },650);
+  },2200);
   var hSpacer=document.createElement('div');
   hSpacer.style.flex='1';
   overlay.appendChild(hSpacer);
   var promptWrap=document.createElement('div');
-  promptWrap.style.cssText='padding:0 36px 44px;text-align:center;';
+  promptWrap.style.cssText='position:absolute;bottom:auto;top:57%;left:0;right:0;padding:0 36px;text-align:center;pointer-events:none;';
   var promptEl=document.createElement('div');
   promptEl.id='prompt-text';
   promptEl.style.cssText='font-family:var(--serif);font-size:28px;font-weight:300;font-style:italic;color:var(--cream);line-height:1.35;transition:opacity 0.5s ease;';
