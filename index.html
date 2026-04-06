@@ -56,7 +56,7 @@ textarea{resize:none;border:none;outline:none}
 <div id="app"></div>
 <script>
 const FAL_KEY='8e2003f2-661b-4b86-8b92-fd5f86be8ab1:aa1eb177dc4e41736dbf18d212b0865f';
-let screen='home',promptIdx=0,rawStory='',story=null,errorMsg='',userPhotos=[],currentGenre=null,forcedGenre=null,_audioDuration=0,_visualStyle=null,activeListeners=[];
+let screen='home',promptIdx=0,promptInterval=null,rawStory='',story=null,errorMsg='',userPhotos=[],currentGenre=null,forcedGenre=null,_audioDuration=0,_visualStyle=null,activeListeners=[];
 function trackEvent(name,data){try{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({event:name},data||{}))}).catch(function(){});}catch(e){}}
 let _timers=[];
 function clearAll(){_timers.forEach(t=>{clearTimeout(t);clearInterval(t)});_timers=[]}
@@ -377,7 +377,7 @@ function renderHome(app){
     hT++;requestAnimationFrame(hLoop);
   }
   hLoop();
-  every(function(){var el=document.getElementById('prompt-text');if(!el)return;el.style.opacity='0';later(function(){promptIdx=(promptIdx+1)%PROMPTS.length;var el2=document.getElementById('prompt-text');if(el2){el2.textContent='"'+PROMPTS[promptIdx]+'"';el2.style.opacity='1';}},650);},5000);
+  if(promptInterval)clearInterval(promptInterval);promptInterval=every(function(){var el=document.getElementById('prompt-text');if(!el)return;el.style.opacity='0';later(function(){promptIdx=(promptIdx+1)%PROMPTS.length;var el2=document.getElementById('prompt-text');if(el2){el2.textContent='"'+PROMPTS[promptIdx]+'"';el2.style.opacity='1';}},650);},5000);
 }
 
 function showInputSheet(){
