@@ -28,10 +28,39 @@ button{cursor:pointer;border:none;background:none;font-family:var(--sans)}
 @keyframes kenBurns3{0%{transform:scale(1.0) translate(1%,-1%)}100%{transform:scale(1.12) translate(-1.5%,1.5%)}}
 @keyframes kenBurns4{0%{transform:scale(1.12) translate(0%,1.5%)}100%{transform:scale(1.0) translate(-2%,0%)}}
 @keyframes captionPop{0%{transform:scale(0.85);opacity:0}100%{transform:scale(1);opacity:1}}
+
+@keyframes splatBloom{0%{opacity:0;transform:scale(0)}15%{opacity:1;transform:scale(0.6)}35%{opacity:1;transform:scale(1.8)}50%{opacity:0.9;transform:scale(2.2)}70%{opacity:0.4;transform:scale(2.5)}100%{opacity:0;transform:scale(3)}}
+@keyframes splatArm{0%{opacity:0;transform:scaleX(0)}30%{opacity:0.8;transform:scaleX(1)}60%{opacity:0.4;transform:scaleX(1.1)}100%{opacity:0;transform:scaleX(0.8)}}
+#splat-overlay{position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden}
+#splat-bloom{position:absolute;top:50%;left:50%;width:200vmax;height:200vmax;margin:-100vmax 0 0 -100vmax;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,1) 0%,rgba(255,255,255,0.95) 20%,rgba(255,255,255,0.6) 45%,rgba(255,255,255,0) 70%);animation:splatBloom 1.2s cubic-bezier(0.22,0.61,0.36,1) forwards}
+.splat-arm{position:absolute;top:50%;left:50%;height:4px;transform-origin:left center;border-radius:0 6px 6px 0;background:linear-gradient(to right,rgba(255,255,255,0.8),rgba(255,255,255,0));animation:splatArm 1s ease-out forwards}
 </style>
 </head>
 <body>
 <div id="app"></div>
+<div id="splat-overlay" style="display:none"><div id="splat-bloom"></div></div>
+<script>
+(function(){
+  var id=window.location.pathname.match(/\/s\/([a-z0-9]+)/i);
+  if(!id)return;
+  var key='sb_splat_'+id[1];
+  if(sessionStorage.getItem(key))return;
+  sessionStorage.setItem(key,'1');
+  var ov=document.getElementById('splat-overlay');
+  if(!ov)return;
+  ov.style.display='block';
+  var arms=8;
+  for(var i=0;i<arms;i++){
+    var a=document.createElement('div');
+    a.className='splat-arm';
+    var angle=(360/arms)*i+(Math.random()*20-10);
+    var len=35+Math.random()*30;
+    a.style.cssText='width:'+len+'vw;transform:rotate('+angle+'deg) scaleX(0);animation-delay:'+(0.1+Math.random()*0.15).toFixed(2)+'s;opacity:0;';
+    ov.appendChild(a);
+  }
+  setTimeout(function(){ov.remove();},1400);
+})();
+</script>
 <script>
 const KB=["kenBurns1","kenBurns2","kenBurns3","kenBurns4"];
 function trackEvent(name,data){try{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({event:name},data||{}))}).catch(function(){});}catch(e){}}
