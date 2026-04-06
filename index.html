@@ -295,7 +295,7 @@ function renderHome(app){
   promptWrap.style.cssText='position:absolute;bottom:auto;top:72%;left:0;right:0;padding:0 36px;text-align:center;pointer-events:none;';
   var promptEl=document.createElement('div');
   promptEl.id='prompt-text';
-  promptEl.style.cssText='font-family:var(--serif);font-size:28px;font-weight:300;font-style:italic;line-height:1.35;transition:opacity 0.5s ease;color:rgba(238,232,220,0.7);';
+  promptEl.style.cssText='font-family:var(--serif);font-size:28px;font-weight:300;font-style:italic;line-height:1.35;transition:opacity 0.5s ease;background:radial-gradient(ellipse 60% 80% at 50% -30%,rgba(229,180,68,0.55) 0%,rgba(238,232,220,0.28) 50%,rgba(238,232,220,0.18) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;background-size:100% 200%;animation:orbGlow 3.2s ease-in-out infinite;';
   promptEl.textContent='"'+PROMPTS[promptIdx]+'"';
   promptWrap.appendChild(promptEl);
   overlay.appendChild(promptWrap);
