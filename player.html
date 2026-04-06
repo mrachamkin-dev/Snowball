@@ -48,8 +48,10 @@ button{cursor:pointer;border:none;background:none;font-family:var(--sans)}
 (function(){
 var id=window.location.pathname.match(/\/s\/([a-z0-9]+)/i);
 if(!id)return;
-var _splatWillPlay=true;
-window._splatReady=new Promise(function(r){window._splatResolve=r;});
+var _sbid=window.location.pathname.match(/\/s\/([a-z0-9]+)/i);var _splatKey=_sbid?'sb_splat_'+_sbid[1]:'sb_splat';
+var _splatWillPlay=!sessionStorage.getItem(_splatKey);
+if(_splatWillPlay)sessionStorage.setItem(_splatKey,'1');
+window._splatReady=_splatWillPlay?new Promise(function(r){window._splatResolve=r;}):Promise.resolve();
 var cv=document.getElementById('splat-canvas');
 if(!cv)return;
 var W=window.innerWidth,H=window.innerHeight;
