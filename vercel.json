@@ -7,6 +7,7 @@
     "api/story.js": { "maxDuration": 30 },
     "api/music.js": { "maxDuration": 120 },
     "api/track.js": { "maxDuration": 10 },
+    "api/photo.js": { "maxDuration": 30 },
     "api/og.js": { "maxDuration": 15 },
     "api/render.js": { "maxDuration": 120 }
   },
