@@ -36,7 +36,7 @@ textarea{resize:none;border:none;outline:none}
 @keyframes captionPop{from{opacity:0;transform:translateY(4px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}} @keyframes snowFall{0%{transform:translateY(-10px);opacity:0}5%{opacity:1}95%{opacity:0.5}100%{transform:translateY(110vh);opacity:0}} @keyframes snowRise{0%{transform:translateY(0);opacity:0}8%{opacity:1}92%{opacity:0.7}100%{transform:translateY(-110vh);opacity:0}}
 @keyframes waveBar{0%{transform:scaleY(0.08);opacity:0.2}100%{transform:scaleY(1);opacity:1}}
 @keyframes breathe{0%,100%{opacity:0.3}50%{opacity:0.9}}
-@keyframes orbGlow{0%,100%{background-position:50% -20%}50%{background-position:50% -40%}}
+@keyframes orbGlow{0%,100%{background-position:50% -20%}50%{background-position:50% -40%}} @keyframes goldShimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 @keyframes orbitCW{to{transform:rotate(360deg)}}
 @keyframes orbitCCW{to{transform:rotate(-360deg)}}
 @keyframes dotRise{0%{transform:translateY(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-200px);opacity:0}}
@@ -285,7 +285,7 @@ function renderHome(app){
     tagTop.style.color='rgba(130,88,80,0)';
     later(function(){
       tagTop.textContent='Tell your story.';
-      tagTop.style.color='rgba(130,88,80,0.55)';
+      tagTop.style.cssText=tagTop.style.cssText+'background:linear-gradient(90deg,rgba(229,180,68,0.7) 0%,rgba(255,220,100,0.95) 40%,rgba(229,180,68,0.7) 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:goldShimmer 2.4s ease-in-out infinite;';
     },650);
   },2200);
   var hSpacer=document.createElement('div');
@@ -362,9 +362,9 @@ function renderHome(app){
     hCtx.fillStyle=ed;hCtx.fillRect(x-r-2,y-r-2,r*2+4,r*2+4);
     hSparks.forEach(function(s){if(s.ox*s.ox+s.oy*s.oy>.50)return;var half=s.maxLife/2;var al=s.life<half?s.life/half:1-(s.life-half)/half;if(al<=.02)return;hGlint(x+s.ox*r,y+s.oy*r,s.size*r,al,s.angle);});
     hCtx.restore();
-    var gr=r*(1.8+e*.6),ga=.12+e*.18;
+    var gr=r*(1.2+e*.3),ga=.07+e*.08;
     var gl=hCtx.createRadialGradient(x,y,r*.7,x,y,gr);
-    gl.addColorStop(0,'rgba(210,235,248,'+ga+')');gl.addColorStop(.4,'rgba(194,220,238,'+(ga*.35)+')');gl.addColorStop(1,'transparent');
+    gl.addColorStop(0,'rgba(210,235,248,'+ga+')');gl.addColorStop(.5,'rgba(194,220,238,'+(ga*.2)+')');gl.addColorStop(1,'transparent');
     hCtx.fillStyle=gl;hCtx.beginPath();hCtx.arc(x,y,gr,0,Math.PI*2);hCtx.fill();
     if(e>.05){
       hCtx.beginPath();hCtx.arc(x,y,r+4+e*8,0,Math.PI*2);hCtx.strokeStyle='rgba(194,228,238,'+(e*.4)+')';hCtx.lineWidth=.8;hCtx.stroke();
