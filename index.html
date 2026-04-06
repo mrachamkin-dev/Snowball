@@ -385,21 +385,31 @@ function showInputSheet(){
   title.textContent='Pack your Snowball.';
 
   var btns=[
-    {label:'🎙  Speak it',sub:'just talk',action:function(){ov.remove();go('speak');}},
-    {label:'✏️  Type it',sub:'write it out',action:function(){ov.remove();go('type');}},
+    {label:'🎙  Speak it',sub:'your voice tells the story',bg:'rgba(229,180,68,0.06)',border:'rgba(229,180,68,0.18)',subColor:'rgba(229,180,68,0.7)',iconBg:'rgba(229,180,68,0.12)',action:function(){ov.remove();go('speak');}},
+    {label:'✏️  Type it',sub:'write it how you see it',bg:'rgba(194,228,238,0.04)',border:'rgba(194,228,238,0.12)',subColor:'rgba(194,228,238,0.6)',iconBg:'rgba(194,228,238,0.08)',action:function(){ov.remove();go('type');}},
+    {label:'📷  Show it',sub:'let the photos talk',bg:'rgba(238,200,140,0.05)',border:'rgba(238,200,140,0.15)',subColor:'rgba(238,200,140,0.65)',iconBg:'rgba(238,200,140,0.1)',action:function(){ov.remove();go('photos');}},
   ];
 
   sheet.appendChild(title);
   btns.forEach(function(b){
     var btn=document.createElement('button');
-    btn.style.cssText='width:100%;padding:18px 20px;border-radius:16px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:space-between;cursor:pointer;';
-    var left=document.createElement('div');
-    left.style.cssText='font-family:var(--sans);font-size:16px;color:var(--cream);font-weight:400;';
-    left.textContent=b.label;
-    var right=document.createElement('div');
-    right.style.cssText='font-family:var(--sans);font-size:11px;color:var(--muted);';
-    right.textContent=b.sub;
-    btn.appendChild(left);btn.appendChild(right);
+    btn.style.cssText='width:100%;padding:16px 18px;border-radius:18px;border:1px solid '+b.border+';background:'+b.bg+';display:flex;align-items:center;gap:14px;cursor:pointer;box-sizing:border-box;';
+    var ico=document.createElement('div');
+    ico.style.cssText='width:40px;height:40px;border-radius:12px;background:'+b.iconBg+';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;';
+    ico.textContent=b.label.trim().split(' ')[0];
+    var mid=document.createElement('div');
+    mid.style.cssText='flex:1;text-align:left;';
+    var lbl=document.createElement('div');
+    lbl.style.cssText='font-family:var(--sans);font-size:15px;color:var(--cream);font-weight:500;margin-bottom:2px;';
+    lbl.textContent=b.label.trim().replace(/^\S+\s+/,'');
+    var sub=document.createElement('div');
+    sub.style.cssText='font-family:var(--sans);font-size:11px;color:'+b.subColor+';';
+    sub.textContent=b.sub;
+    mid.appendChild(lbl);mid.appendChild(sub);
+    var arr=document.createElement('div');
+    arr.style.cssText='font-size:14px;color:'+b.subColor+';opacity:0.6;';
+    arr.textContent='→';
+    btn.appendChild(ico);btn.appendChild(mid);btn.appendChild(arr);
     btn.onclick=b.action;
     sheet.appendChild(btn);
   });
