@@ -370,7 +370,7 @@ function renderHome(app){
     hT++;requestAnimationFrame(hLoop);
   }
   hLoop();
-  every(function(){var el=document.getElementById('prompt-text');if(!el)return;el.style.opacity='0';later(function(){promptIdx=(promptIdx+1)%PROMPTS.length;var el2=document.getElementById('prompt-text');if(el2){el2.textContent='"'+PROMPTS[promptIdx]+'"';el2.style.opacity='1';}},500);},4800);
+  every(function(){var el=document.getElementById('prompt-text');if(!el)return;el.style.opacity='0';later(function(){promptIdx=(promptIdx+1)%PROMPTS.length;var el2=document.getElementById('prompt-text');if(el2){el2.textContent='"'+PROMPTS[promptIdx]+'"';el2.style.opacity='1';}},650);},5000);
 }
 
 function showInputSheet(){
