@@ -63,7 +63,7 @@ function clearAll(){_timers.forEach(t=>{clearTimeout(t);clearInterval(t)});_time
 function later(fn,ms){const t=setTimeout(fn,ms);_timers.push(t);return t}
 function every(fn,ms){const t=setInterval(fn,ms);_timers.push(t);return t}
 function go(s){clearAll();screen=s;render()}
-const PROMPTS=['What\'s your "you had to be there" story?','What\'s a story your friends always bring up about you?','What happened on your best night out?','What\'s a moment that changed everything?','Tell me about a time you almost didn\'t go','What\'s the funniest thing that happened to you this year?','What\'s a story you\'ve never told anyone?','What happened the night you\'ll never forget?','What\'s your "I can\'t believe that actually happened" story?','Tell me about a stranger who changed your day'];
+const PROMPTS=['Remember when we...','Remember that night...','Remember that trip?','Who needs a laugh right now?','That night we met...','That one time in high school...','Who needs a smile right now?','If we could replay one night...','That one time in college...','What only you two would get?','What still makes you laugh thinking about it?','That time we probably shouldn\'t have...'];
 const BUILD_STEPS=["Finding your story's spine...",'Choosing your moments...','Painting your world...','Finding your voice...','Almost ready...'];
 const KB=['kenBurns1','kenBurns2','kenBurns3','kenBurns4'];
 function ballShadow(s){return[`inset ${-s*.14}px ${-s*.12}px ${s*.30}px rgba(0,0,0,0.30)`,`inset ${s*.06}px ${s*.06}px ${s*.18}px rgba(255,255,255,0.70)`,`0 ${s*.14}px ${s*.46}px rgba(0,0,0,0.60)`,`0 0 ${s*.46}px rgba(194,228,238,0.20)`].join(',')}
@@ -318,16 +318,9 @@ function renderHome(app){
   overlay.appendChild(hdr);
   var tagTop=document.createElement('div');
   tagTop.style.cssText='font-family:var(--sans);font-size:13px;font-weight:500;color:rgba(130,88,80,0);letter-spacing:0.18em;text-transform:uppercase;text-align:center;padding:12px 36px 0;transition:opacity 0.6s ease;';
-  tagTop.textContent='Here\'s your snowball.';
+  tagTop.textContent='Make it worth throwing.';
   overlay.appendChild(tagTop);
   later(function(){tagTop.style.color='rgba(130,88,80,0.55)';},400);
-  later(function(){
-    tagTop.style.color='rgba(130,88,80,0)';
-    later(function(){
-      tagTop.textContent='Tell your story.';
-      tagTop.style.cssText=tagTop.style.cssText+'background:linear-gradient(90deg,rgba(229,180,68,0.7) 0%,rgba(255,220,100,0.95) 40%,rgba(229,180,68,0.7) 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:goldShimmer 2.4s ease-in-out infinite;';
-    },650);
-  },2200);
   var hSpacer=document.createElement('div');
   hSpacer.style.flex='1';
   overlay.appendChild(hSpacer);
