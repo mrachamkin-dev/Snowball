@@ -186,9 +186,10 @@ async function executeVisualPlan(plan,photos,setProgFn,maxImages){  var _hasUser
   for(var si=0;si<segs.length;si++){
     var seg=segs[si];
     textSegs.push({text:seg.text||''});
-    if(seg.type==='user_photo'&&photos[seg.photoIndex]){
-      images.push(photos[seg.photoIndex]);
-    } else {
+    if(seg.type==='user_photo'){
+      var _up=photos[seg.photoIndex]||photos.filter(Boolean)[0]||null;
+      if(_up){images.push(_up);continue;}
+    }{
       var prompt=_noPeople+(seg.imagePrompt||'');
       var url=await generateImage(prompt,false,_visualStyle);
       images.push(url);
