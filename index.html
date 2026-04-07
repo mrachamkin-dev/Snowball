@@ -162,6 +162,7 @@ function resizeImageForAPI(dataUrl,maxSize,quality){
       ctx.drawImage(img,0,0,canvas.width,canvas.height);
       resolve(canvas.toDataURL('image/jpeg',quality||0.7));
     };
+    img.crossOrigin='anonymous';
     img.src=dataUrl;
   });
 }
