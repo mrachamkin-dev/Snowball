@@ -242,6 +242,6 @@ var SnowballMusic = (function(){
     }, 100);
   }
 
-  function unlock(){if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)();masterGain=ctx.createGain();masterGain.gain.value=0;masterGain.connect(ctx.destination);}if(ctx.state==='suspended')ctx.resume();}
+  function unlock(){if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)();masterGain=ctx.createGain();masterGain.gain.value=0;masterGain.connect(ctx.destination);}if(ctx.state==='suspended')ctx.resume();try{var _sa=document.getElementById('_sb_silence');if(!_sa){_sa=document.createElement('audio');_sa.id='_sb_silence';_sa.src='data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';_sa.loop=true;_sa.volume=0.001;document.body.appendChild(_sa);}_sa.play().catch(function(){});}}catch(e){}}
   return { play:play, stop:stop, unlock:unlock };
 })();
