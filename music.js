@@ -14,7 +14,14 @@ var SnowballMusic = (function(){
     ctx = new (window.AudioContext || window.webkitAudioContext)();
     masterGain = ctx.createGain();
     masterGain.gain.value = 0;
-    masterGain.connect(ctx.destination);
+    var compressor = ctx.createDynamicsCompressor();
+    compressor.threshold.value = -18;
+    compressor.knee.value = 8;
+    compressor.ratio.value = 6;
+    compressor.attack.value = 0.003;
+    compressor.release.value = 0.25;
+    masterGain.connect(compressor);
+    compressor.connect(ctx.destination);
     ctx.resume();
   }
 
@@ -35,7 +42,7 @@ var SnowballMusic = (function(){
   function fadeIn(duration){
     masterGain.gain.cancelScheduledValues(ctx.currentTime);
     masterGain.gain.setValueAtTime(0, ctx.currentTime);
-    masterGain.gain.setTargetAtTime(0.20, ctx.currentTime, duration/3);
+    masterGain.gain.setTargetAtTime(0.15, ctx.currentTime, duration/3);
   }
 
   function osc(freq, type, gainVal, startTime, detune){
