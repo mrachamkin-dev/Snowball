@@ -671,7 +671,7 @@ function startCaptions(narration){
   if(story&&story.wordTimings&&story.wordTimings.length>0){
     var timings=story.wordTimings;
     // Group into 3-word phrases
-    var phrases=[];for(var pi=0;pi<timings.length;pi+=3){var grp=timings.slice(pi,pi+3);phrases.push({start:grp[0].start,end:grp[grp.length-1].end,text:grp.map(function(w){return w.word;}).join(' ');});}
+    var phrases=[];for(var pi=0;pi<timings.length;pi+=3){var grp=timings.slice(pi,pi+3);phrases.push({start:grp[0].start,end:grp[grp.length-1].end,text:grp.map(function(w){return w.word;}).join(' ')});}
     function onTimeUpdate(){
       var t=audio.currentTime;
       var current=null;
