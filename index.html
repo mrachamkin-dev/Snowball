@@ -670,18 +670,19 @@ function startCaptions(narration){
   // Use word timings if available, else fall back to even distribution
   if(story&&story.wordTimings&&story.wordTimings.length>0){
     var timings=story.wordTimings;
-    // Use timeupdate for precise sync
+    // Group into 3-word phrases
+    var phrases=[];for(var pi=0;pi<timings.length;pi+=3){var grp=timings.slice(pi,pi+3);phrases.push({start:grp[0].start,end:grp[grp.length-1].end,text:grp.map(function(w){return w.word;}).join(' ');});}
     function onTimeUpdate(){
       var t=audio.currentTime;
       var current=null;
-      for(var i=0;i<timings.length;i++){
-        if(t>=timings[i].start&&t<=timings[i].end){current=timings[i];break;}
+      for(var i=0;i<phrases.length;i++){
+        if(t>=phrases[i].start&&t<=phrases[i].end){current=phrases[i];break;}
       }
-      if(current&&cw.dataset.word!==current.word){
-        cw.dataset.word=current.word;
+      if(current&&cw.dataset.word!==current.text){
+        cw.dataset.word=current.text;
         cw.style.animation='none';
         void cw.offsetWidth;
-        cw.textContent=current.word;
+        cw.textContent=current.text;
         cw.style.animation='captionPop 0.12s cubic-bezier(0.34,1.56,0.64,1) both';
       }
     }
