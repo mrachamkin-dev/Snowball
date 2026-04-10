@@ -610,7 +610,7 @@ function renderSpeak(app){
       var addPhotoBtn=document.createElement('button');
       addPhotoBtn.style.cssText='width:100%;padding:18px 20px;border-radius:16px;border:1px solid var(--dim2);background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:space-between;cursor:pointer;';
       addPhotoBtn.innerHTML='<span style="font-family:var(--sans);font-size:16px;color:var(--cream);">📷  Add photos</span><span style="font-family:var(--sans);font-size:11px;color:var(--muted);">makes it more cinematic</span>';
-      addPhotoBtn.onclick=function(){ov.remove();go('photos');};
+      addPhotoBtn.onclick=function(){if(_mediaRecorder&&_mediaRecorder.state==='recording'){_mediaRecorder.onstop=function(){_recordedBlob=new Blob(_audioChunks,{type:_mediaRecorder.mimeType});_audioChunks=[];window._recordedBlob=_recordedBlob;};_mediaRecorder.stop();}else{window._recordedBlob=_recordedBlob;}window._useMyVoice=true;setTimeout(function(){ov.remove();go('photos');},_mediaRecorder&&_mediaRecorder.state==='recording'?600:0);};
       var skipBtn=document.createElement('button');
       skipBtn.style.cssText='width:100%;padding:18px;border-radius:18px;background:var(--gold);color:var(--black);font-size:16px;font-weight:600;';
       skipBtn.textContent='Shape my story ❄️';
