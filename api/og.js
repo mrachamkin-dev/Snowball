@@ -26,7 +26,7 @@ module.exports = async function handler(req, res) {
           const esc = (s) => (s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
           // Replace empty OG tags with real data
-          const inlineStory = JSON.stringify(story).replace(/<\/script>/g,'<\/script>');html=html.replace('</head>',`<script>window.__STORY__=${inlineStory};</script></head>`);html = html
+          const inlineStory = JSON.stringify(story).replace(/<\/script>/g,'<\\/script>');html=html.replace('</head>',`<script>window.__STORY__=${inlineStory};</script></head>`);html = html
             .replace(
               '<meta property="og:title" content="">',
               `<meta property="og:title" content="${esc(title)}">`
