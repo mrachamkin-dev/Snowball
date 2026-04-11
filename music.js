@@ -8,6 +8,7 @@ var SnowballMusic = (function(){
   var activeNodes = [];
   var fadeInterval = null;
   var generation = 0;
+  var _targetGain = 0.15;
 
   function init(){
     if(ctx){if(ctx.state==='suspended')ctx.resume();return;}
@@ -25,9 +26,20 @@ var SnowballMusic = (function(){
     ctx.resume();
   }
 
+  function setGain(val){
+    _targetGain = val;
+    if(masterGain && ctx){
+      try{
+        masterGain.gain.cancelScheduledValues(ctx.currentTime);
+        masterGain.gain.setTargetAtTime(val, ctx.currentTime, 0.4);
+      }catch(e){}
+    }
+  }
+
   function stop(){
     if(fadeInterval) clearInterval(fadeInterval);
     if(!masterGain) return;
+    _targetGain = 0.15;
     generation++;
     var myGen=generation;
     masterGain.gain.setTargetAtTime(0, ctx.currentTime, 0.5);
@@ -42,7 +54,7 @@ var SnowballMusic = (function(){
   function fadeIn(duration){
     masterGain.gain.cancelScheduledValues(ctx.currentTime);
     masterGain.gain.setValueAtTime(0, ctx.currentTime);
-    masterGain.gain.setTargetAtTime(0.15, ctx.currentTime, duration/3);
+    masterGain.gain.setTargetAtTime(_targetGain, ctx.currentTime, duration/3);
   }
 
   function osc(freq, type, gainVal, startTime, detune){
@@ -243,5 +255,5 @@ var SnowballMusic = (function(){
   }
 
   function unlock(){if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)();masterGain=ctx.createGain();masterGain.gain.value=0;masterGain.connect(ctx.destination);}if(ctx.state==='suspended')ctx.resume();try{var _sa=document.getElementById('_sb_silence');if(!_sa){_sa=document.createElement('audio');_sa.id='_sb_silence';_sa.src='data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';_sa.loop=true;_sa.volume=0.001;document.body.appendChild(_sa);}var _p=_sa.play();if(_p&&_p.catch)_p.catch(function(err){});}catch(e){}}
-  return { play:play, stop:stop, unlock:unlock };
+  return { play:play, stop:stop, unlock:unlock, setGain:setGain };
 })();
